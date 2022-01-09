@@ -1,4 +1,4 @@
-import * as anchor from '@project-serum/anchor';
+import anchor from '@project-serum/anchor';
 import { Connection, PublicKey } from '@solana/web3.js';
 import {
   AccountLayout,

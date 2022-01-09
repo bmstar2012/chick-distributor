@@ -140,7 +140,11 @@ const buildMintClaim = async (
   // TODO: since it's in the PDA do we need it to be in the leaf?
   const leaf = Buffer.from(
     [...new BN(index).toArray("le", 8),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
      ...secret.toBuffer(),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
      ...mint.toBuffer(),
      ...new BN(amount).toArray("le", 8),
     ]
@@ -208,12 +212,18 @@ const buildMintClaim = async (
           { pubkey: TOKEN_PROGRAM_ID        , isSigner: false , isWritable: false } ,
       ],
       data: Buffer.from([
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         ...Buffer.from(sha256.digest("global:claim")).slice(0, 8),
         ...new BN(cbump).toArray("le", 1),
         ...new BN(index).toArray("le", 8),
         ...new BN(amount).toArray("le", 8),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         ...secret.toBuffer(),
         ...new BN(proof.length).toArray("le", 4),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         ...Buffer.concat(proof),
       ])
   })
@@ -247,7 +257,11 @@ const buildCandyClaim = async (
   // TODO: since it's in the PDA do we need it to be in the leaf?
   const leaf = Buffer.from(
     [...new BN(index).toArray("le", 8),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
      ...secret.toBuffer(),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
      ...configKey.toBuffer(),
      ...new BN(amount).toArray("le", 8),
     ]
@@ -308,8 +322,8 @@ const buildCandyClaim = async (
 
   const nftsAvailable = amount;
   if (nftsAlreadyMinted >= nftsAvailable) {
-    throw new Error(`Cannot mint another NFT. ${nftsAvailable} NFT(s) were originally allocated`
-      + (nftsAlreadyMinted > 0 ? ` and ${nftsAlreadyMinted} NFT(s) were already minted` : ""));
+    throw new Error(`Cannot mint another NFT. ${nftsAvailable} NFT(s) were originally allocated${
+       nftsAlreadyMinted > 0 ? ` and ${nftsAlreadyMinted} NFT(s) were already minted` : ""}`);
   }
 
 
@@ -319,6 +333,7 @@ const buildCandyClaim = async (
 
   const candyMachineMints : Array<Keypair> = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   const [instrs, mint] = await buildSingleCandyMint(
     connection,
     walletKey,
@@ -334,8 +349,12 @@ const buildCandyClaim = async (
       ...new BN(cbump).toArray("le", 1),
       ...new BN(index).toArray("le", 8),
       ...new BN(amount).toArray("le", 8),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       ...secret.toBuffer(),
       ...new BN(proof.length).toArray("le", 4),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       ...Buffer.concat(proof),
     ]),
   );
@@ -362,6 +381,7 @@ const buildSingleCandyMint = async (
   const candyMachineMaster = await getEdition(candyMachineMint.publicKey);
 
   const setup : Array<TransactionInstruction> = [];
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   await createMintAndAccount(connection, walletKey, candyMachineMint.publicKey, setup);
   setup.push(new TransactionInstruction({
       programId: GUMDROP_DISTRIBUTOR_ID,
@@ -387,7 +407,11 @@ const buildSingleCandyMint = async (
           { pubkey: SYSVAR_CLOCK_PUBKEY       , isSigner: false , isWritable: false } ,
       ],
       data: Buffer.from([
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         ...Buffer.from(sha256.digest("global:claim_candy")).slice(0, 8),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         ...data,
       ])
   }));
@@ -475,7 +499,11 @@ const buildEditionClaim = async (
   // should we assert that the amount is 1?
   const leaf = Buffer.from(
     [...new BN(index).toArray("le", 8),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
      ...secret.toBuffer(),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
      ...masterMintKey.toBuffer(),
      ...new BN(amount).toArray("le", 8),
      ...new BN(edition).toArray("le", 8),
@@ -556,13 +584,19 @@ const buildEditionClaim = async (
           { pubkey: SYSVAR_RENT_PUBKEY        , isSigner: false , isWritable: false } ,
       ],
       data: Buffer.from([
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         ...Buffer.from(sha256.digest("global:claim_edition")).slice(0, 8),
         ...new BN(cbump).toArray("le", 1),
         ...new BN(index).toArray("le", 8),
         ...new BN(amount).toArray("le", 8),
         ...new BN(edition).toArray("le", 8),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         ...secret.toBuffer(),
         ...new BN(proof.length).toArray("le", 4),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         ...Buffer.concat(proof),
       ])
   }));
@@ -623,6 +657,7 @@ const fetchNeedsTemporalSigner = async (
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type ClaimProps = {};
 
 export const Claim = (
@@ -631,6 +666,7 @@ export const Claim = (
   const connection = useConnection();
   const wallet = useWallet();
 
+  // eslint-disable-next-line react/destructuring-assignment
   let query = props.location.search;
   if (query && query.length > 0) {
     localStorage.setItem("claimQuery", query);
@@ -644,6 +680,7 @@ export const Claim = (
 
   const [distributor, setDistributor] = React.useState((params.distributor as string || ""));
   const [claimMethod, setClaimMethod] = React.useState(
+    // eslint-disable-next-line no-nested-ternary
         params.tokenAcc ? "transfer"
       : params.config   ? "candy"
       : params.master   ? "edition"
@@ -698,244 +735,235 @@ export const Claim = (
   const lambdaAPIEndpoint = "https://{PLACEHOLDER-API-ID}.execute-api.us-east-2.amazonaws.com/send-OTP";
 
   const skipAWSWorkflow = false;
-
-  const sendOTP = async (e : React.SyntheticEvent) => {
-    e.preventDefault();
-
-    if (!wallet.connected || wallet.publicKey === null) {
-      throw new Error(`Wallet not connected`);
-    }
-
-    const index = Number(indexStr);
-    const amount = Number(amountStr);
-    let pin : BN | null = null;
-
-    if (isNaN(amount)) {
-      throw new Error(`Could not parse amount ${amountStr}`);
-    }
-    if (isNaN(index)) {
-      throw new Error(`Could not parse index ${indexStr}`);
-    }
-    if (params.pin !== "NA") {
-      try {
-        pin = new BN(pinStr);
-      } catch (err) {
-        throw new Error(`Could not parse pin ${pinStr}: ${err}`);
-      }
-    }
-
-    // TODO: use cached?
-    const [distributorKey, distributorInfo] =
-        await fetchDistributor(connection, distributor);
-
-    console.log("Distributor", distributorInfo);
-
-    const proof = proofStr === "" ? [] : proofStr.split(",").map(b => {
-      const ret = Buffer.from(bs58.decode(b))
-      if (ret.length !== 32)
-        throw new Error(`Invalid proof hash length`);
-      return ret;
-    });
-
-    let instructions, pdaSeeds, extraSigners;
-    if (claimMethod === "candy") {
-      console.log("Building candy claim");
-      [instructions, pdaSeeds, extraSigners] = await buildCandyClaim(
-        connection, wallet.publicKey, distributorKey, distributorInfo,
-        candyConfig, candyUUID,
-        proof, handle, amount, index, pin
-      );
-    } else if (claimMethod === "transfer") {
-      [instructions, pdaSeeds, extraSigners] = await buildMintClaim(
-        connection, wallet.publicKey, distributorKey, distributorInfo,
-        tokenAcc,
-        proof, handle, amount, index, pin
-      );
-    } else if (claimMethod === "edition") {
-      const edition = Number(editionStr);
-      if (isNaN(edition)) {
-        throw new Error(`Could not parse edition ${editionStr}`);
-      }
-      [instructions, pdaSeeds, extraSigners] = await buildEditionClaim(
-        connection, wallet.publicKey, distributorKey, distributorInfo,
-        masterMint, edition,
-        proof, handle, amount, index, pin
-      );
-    } else {
-      throw new Error(`Unknown claim method ${claimMethod}`);
-    }
-
-    // NB: if we're claiming through wallets then pdaSeeds should be empty
-    // since the secret is the wallet key (which is also a signer)
-    if (pin === null && pdaSeeds.length > 0) {
-      throw new Error(`Internal error: PDA generated when distributing to wallet directly`);
-    }
-
-    const transaction = new Transaction({
-      feePayer: wallet.publicKey,
-      recentBlockhash: (await connection.getRecentBlockhash("singleGossip")).blockhash,
-    });
-
-    const signers = new Set<PublicKey>();
-    for (const instr of instructions) {
-      transaction.add(instr);
-      for (const key of instr.keys)
-        if (key.isSigner)
-          signers.add(key.pubkey);
-    }
-    console.log(`Expecting the following signers: ${[...signers].map(s => s.toBase58())}`);
-    transaction.setSigners(...signers);
-
-    if (extraSigners.length > 0) {
-      transaction.partialSign(...extraSigners);
-    }
-
-    const txnNeedsTemporalSigner =
-        transaction.signatures.some(s => s.publicKey.equals(GUMDROP_TEMPORAL_SIGNER));
-    if (txnNeedsTemporalSigner && !skipAWSWorkflow) {
-      const otpQuery : { [key: string] : any } = {
-        method: "send",
-        transaction: bs58.encode(transaction.serializeMessage()),
-        seeds: pdaSeeds,
-      };
-      if (discordGuild) {
-        otpQuery.discordGuild = discordGuild;
-      }
-      const params = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(otpQuery),
-      };
-
-      const response = await fetch(lambdaAPIEndpoint, params);
-      console.log(response);
-
-      if (response.status !== 200) {
-        throw new Error(`Failed to send AWS OTP`);
-      }
-
-      let data;
-      try {
-        data = await response.json();
-      } catch {
-        throw new Error(`Could not parse AWS OTP response`);
-      }
-
-      console.log("AWS OTP response data:", data);
-
-      let succeeded, toCheck;
-      if (discordGuild) {
-        succeeded = !!data.id;
-        toCheck = "discord";
-      } else {
-        succeeded = !!data.MessageId;
-        toCheck = "email";
-      }
-
-      if (!succeeded) {
-        throw new Error(`Failed to send AWS OTP`);
-      }
-
-      notify({
-        message: "OTP sent",
-        description: `Please check your ${toCheck} (${handle}) for an OTP`,
-      });
-    }
-
-    return transaction;
-  };
-
-  const verifyOTP = async (
-    e : React.SyntheticEvent,
-    transaction : Transaction | null,
-  ) => {
-    e.preventDefault();
-
-    if (!transaction) {
-      throw new Error(`Transaction not available for OTP verification`);
-    }
-
-    if (!wallet.connected || wallet.publicKey === null) {
-      throw new Error(`Wallet not connected`);
-    }
-
-    const txnNeedsTemporalSigner =
-        transaction.signatures.some(s => s.publicKey.equals(GUMDROP_TEMPORAL_SIGNER));
-    if (txnNeedsTemporalSigner && !skipAWSWorkflow) {
-      // TODO: distinguish between OTP failure and transaction-error. We can try
-      // again on the former but not the latter
-      const OTP = Number(OTPStr);
-      if (isNaN(OTP) || OTPStr.length === 0) {
-        throw new Error(`Could not parse OTP ${OTPStr}`);
-      }
-
-      const params = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        FunctionName: "send-OTP",
-        body: JSON.stringify({
-          method: "verify",
-          otp: OTP,
-          handle: handle,  // TODO?
-        }),
-      };
-
-      const response = await fetch(lambdaAPIEndpoint, params);
-      console.log(response);
-
-      if (response.status !== 200) {
-        const blob = JSON.stringify(response);
-        throw new Error(`Failed to verify AWS OTP. ${blob}`);
-      }
-
-      let data;
-      try {
-        data = await response.json();
-      } catch {
-        throw new Error(`Could not parse AWS OTP verification response`);
-      }
-
-      console.log("AWS verify response data:", data);
-
-      let sig;
-      try {
-        sig = bs58.decode(data);
-      } catch {
-        throw new Error(`Could not decode transaction signature ${data.body}`);
-      }
-
-      transaction.addSignature(GUMDROP_TEMPORAL_SIGNER, sig);
-    }
-
-    let fullySigned;
-    try {
-      fullySigned = await wallet.signTransaction(transaction);
-    } catch {
-      throw new Error("Failed to sign transaction");
-    }
-
-    const claimResult = await sendSignedTransaction({
-      connection,
-      signedTransaction: fullySigned,
-    });
-
-    console.log(claimResult);
-    notify({
-      message: "Claim succeeded",
-      description: (
-        <HyperLink href={explorerLinkFor(claimResult.txid, connection)}>
-          View transaction on explorer
-        </HyperLink>
-      ),
-    });
-    setTransaction(null);
-    try {
-      setNeedsTemporalSigner(await fetchNeedsTemporalSigner(
-        connection, distributor, indexStr, claimMethod));
-    } catch {
-      // TODO: log?
-    }
-  };
+  //
+  // const sendOTP = async (e : React.SyntheticEvent) => {
+  //   e.preventDefault();
+  //
+  //   if (!wallet.connected || wallet.publicKey === null) {
+  //     throw new Error(`Wallet not connected`);
+  //   }
+  //
+  //   const index = Number(indexStr);
+  //   const amount = Number(amountStr);
+  //   let pin : BN | null = null;
+  //
+  //   if (isNaN(amount)) {
+  //     throw new Error(`Could not parse amount ${amountStr}`);
+  //   }
+  //   if (isNaN(index)) {
+  //     throw new Error(`Could not parse index ${indexStr}`);
+  //   }
+  //   if (params.pin !== "NA") {
+  //     try {
+  //       pin = new BN(pinStr);
+  //     } catch (err) {
+  //       throw new Error(`Could not parse pin ${pinStr}: ${err}`);
+  //     }
+  //   }
+  //
+  //   // TODO: use cached?
+  //   const [distributorKey, distributorInfo] =
+  //       await fetchDistributor(connection, distributor);
+  //
+  //   console.log("Distributor", distributorInfo);
+  //
+  //   const proof = proofStr === "" ? [] : proofStr.split(",").map(b => {
+  //     const ret = Buffer.from(bs58.decode(b))
+  //     if (ret.length !== 32)
+  //       throw new Error(`Invalid proof hash length`);
+  //     return ret;
+  //   });
+  //
+  //   let instructions;
+  //   let pdaSeeds;
+  //   let extraSigners;
+  //   if (claimMethod === "transfer") {
+  //     [instructions, pdaSeeds, extraSigners] = await buildMintClaim(
+  //       connection, wallet.publicKey, distributorKey, distributorInfo,
+  //       tokenAcc,
+  //       proof, handle, amount, index, pin
+  //     );
+  //   } else {
+  //     throw new Error(`Unknown claim method ${claimMethod}`);
+  //   }
+  //
+  //   // NB: if we're claiming through wallets then pdaSeeds should be empty
+  //   // since the secret is the wallet key (which is also a signer)
+  //   if (pin === null && pdaSeeds.length > 0) {
+  //     throw new Error(`Internal error: PDA generated when distributing to wallet directly`);
+  //   }
+  //
+  //   // eslint-disable-next-line @typescript-eslint/no-shadow
+  //   const transaction = new Transaction({
+  //     feePayer: wallet.publicKey,
+  //     recentBlockhash: (await connection.getRecentBlockhash("singleGossip")).blockhash,
+  //   });
+  //
+  //   const signers = new Set<PublicKey>();
+  //   for (const instr of instructions) {
+  //     transaction.add(instr);
+  //     for (const key of instr.keys)
+  //       if (key.isSigner)
+  //         signers.add(key.pubkey);
+  //   }
+  //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //   // @ts-ignore
+  //   console.log(`Expecting the following signers: ${[...signers].map(s => s.toBase58())}`);
+  //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //   // @ts-ignore
+  //   transaction.setSigners(...signers);
+  //
+  //   if (extraSigners.length > 0) {
+  //     transaction.partialSign(...extraSigners);
+  //   }
+  //
+  //   const txnNeedsTemporalSigner =
+  //       transaction.signatures.some(s => s.publicKey.equals(GUMDROP_TEMPORAL_SIGNER));
+  //   if (txnNeedsTemporalSigner && !skipAWSWorkflow) {
+  //     const otpQuery : { [key: string] : any } = {
+  //       method: "send",
+  //       transaction: bs58.encode(transaction.serializeMessage()),
+  //       seeds: pdaSeeds,
+  //     };
+  //     if (discordGuild) {
+  //       otpQuery.discordGuild = discordGuild;
+  //     }
+  //     const params = {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(otpQuery),
+  //     };
+  //
+  //     const response = await fetch(lambdaAPIEndpoint, params);
+  //     console.log(response);
+  //
+  //     if (response.status !== 200) {
+  //       throw new Error(`Failed to send AWS OTP`);
+  //     }
+  //
+  //     let data;
+  //     try {
+  //       data = await response.json();
+  //     } catch {
+  //       throw new Error(`Could not parse AWS OTP response`);
+  //     }
+  //
+  //     console.log("AWS OTP response data:", data);
+  //
+  //     let succeeded; let toCheck;
+  //     if (discordGuild) {
+  //       succeeded = !!data.id;
+  //       toCheck = "discord";
+  //     } else {
+  //       succeeded = !!data.MessageId;
+  //       toCheck = "email";
+  //     }
+  //
+  //     if (!succeeded) {
+  //       throw new Error(`Failed to send AWS OTP`);
+  //     }
+  //
+  //     notify({
+  //       message: "OTP sent",
+  //       description: `Please check your ${toCheck} (${handle}) for an OTP`,
+  //     });
+  //   }
+  //
+  //   return transaction;
+  // };
+  //
+  // const verifyOTP = async (
+  //   e : React.SyntheticEvent,
+  //   // eslint-disable-next-line @typescript-eslint/no-shadow
+  //   transaction : Transaction | null,
+  // ) => {
+  //   e.preventDefault();
+  //
+  //   if (!transaction) {
+  //     throw new Error(`Transaction not available for OTP verification`);
+  //   }
+  //
+  //   if (!wallet.connected || wallet.publicKey === null) {
+  //     throw new Error(`Wallet not connected`);
+  //   }
+  //
+  //   const txnNeedsTemporalSigner =
+  //       transaction.signatures.some(s => s.publicKey.equals(GUMDROP_TEMPORAL_SIGNER));
+  //   if (txnNeedsTemporalSigner && !skipAWSWorkflow) {
+  //     // TODO: distinguish between OTP failure and transaction-error. We can try
+  //     // again on the former but not the latter
+  //     const OTP = Number(OTPStr);
+  //     if (isNaN(OTP) || OTPStr.length === 0) {
+  //       throw new Error(`Could not parse OTP ${OTPStr}`);
+  //     }
+  //
+  //     const params = {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       FunctionName: "send-OTP",
+  //       body: JSON.stringify({
+  //         method: "verify",
+  //         otp: OTP,
+  //         handle,  // TODO?
+  //       }),
+  //     };
+  //
+  //     const response = await fetch(lambdaAPIEndpoint, params);
+  //     console.log(response);
+  //
+  //     if (response.status !== 200) {
+  //       const blob = JSON.stringify(response);
+  //       throw new Error(`Failed to verify AWS OTP. ${blob}`);
+  //     }
+  //
+  //     let data;
+  //     try {
+  //       data = await response.json();
+  //     } catch {
+  //       throw new Error(`Could not parse AWS OTP verification response`);
+  //     }
+  //
+  //     console.log("AWS verify response data:", data);
+  //
+  //     let sig;
+  //     try {
+  //       sig = bs58.decode(data);
+  //     } catch {
+  //       throw new Error(`Could not decode transaction signature ${data.body}`);
+  //     }
+  //
+  //     transaction.addSignature(GUMDROP_TEMPORAL_SIGNER, sig);
+  //   }
+  //
+  //   let fullySigned;
+  //   try {
+  //     fullySigned = await wallet.signTransaction(transaction);
+  //   } catch {
+  //     throw new Error("Failed to sign transaction");
+  //   }
+  //
+  //   const claimResult = await sendSignedTransaction({
+  //     connection,
+  //     signedTransaction: fullySigned,
+  //   });
+  //
+  //   console.log(claimResult);
+  //   notify({
+  //     message: "Claim succeeded",
+  //     description: (
+  //       <HyperLink href={explorerLinkFor(claimResult.txid, connection)}>
+  //         View transaction on explorer
+  //       </HyperLink>
+  //     ),
+  //   });
+  //   setTransaction(null);
+  //   try {
+  //     setNeedsTemporalSigner(await fetchNeedsTemporalSigner(
+  //       connection, distributor, indexStr, claimMethod));
+  //   } catch {
+  //     // TODO: log?
+  //   }
+  // };
 
   const [loading, setLoading] = React.useState(false);
   const loadingProgress = () => (
@@ -950,52 +978,53 @@ export const Claim = (
       }}
     />
   );
+  //
+  // const verifyOTPC = (onClick) => (
+  //   <>
+  //     <TextField
+  //       id="otp-text-field"
+  //       label="OTP"
+  //       value={OTPStr}
+  //       onChange={(e) => setOTPStr(e.target.value)}
+  //     />
+  //     <Box />
+  //
+  //     <Box sx={{ position: "relative" }}>
+  //     <Button
+  //       disabled={!wallet.connected || !OTPStr || loading}
+  //       variant="contained"
+  //       color="success"
+  //       style={{ width: "100%" }}
+  //       onClick={(e) => {
+  //         setLoading(true);
+  //         const wrap = async () => {
+  //           try {
+  //             await verifyOTP(e, transaction);
+  //             setLoading(false);
+  //             onClick();
+  //           } catch (err) {
+  //             notify({
+  //               message: "Claim failed",
+  //               description: `${err}`,
+  //             });
+  //             setLoading(false);
+  //           }
+  //         };
+  //         wrap();
+  //       }}
+  //     >
+  //       Claim Gumdrop
+  //     </Button>
+  //     {loading && loadingProgress()}
+  //     </Box>
+  //   </>
+  // );
 
-  const verifyOTPC = (onClick) => (
-    <React.Fragment>
-      <TextField
-        id="otp-text-field"
-        label="OTP"
-        value={OTPStr}
-        onChange={(e) => setOTPStr(e.target.value)}
-      />
-      <Box />
-
-      <Box sx={{ position: "relative" }}>
-      <Button
-        disabled={!wallet.connected || !OTPStr || loading}
-        variant="contained"
-        color="success"
-        style={{ width: "100%" }}
-        onClick={(e) => {
-          setLoading(true);
-          const wrap = async () => {
-            try {
-              await verifyOTP(e, transaction);
-              setLoading(false);
-              onClick();
-            } catch (err) {
-              notify({
-                message: "Claim failed",
-                description: `${err}`,
-              });
-              setLoading(false);
-            }
-          };
-          wrap();
-        }}
-      >
-        Claim Gumdrop
-      </Button>
-      {loading && loadingProgress()}
-      </Box>
-    </React.Fragment>
-  );
-
-  const claimData = (claimMethod) => {
-    if (claimMethod === "candy") {
+  // eslint-disable-next-line consistent-return
+  const claimData = (paramClaimMethod: string) => {
+    if (paramClaimMethod === "candy") {
       return (
-        <React.Fragment>
+        <>
           <TextField
             id="config-text-field"
             label="Candy Config"
@@ -1010,11 +1039,11 @@ export const Claim = (
             onChange={e => setCandyUUID(e.target.value)}
             disabled={!editable}
           />
-        </React.Fragment>
+        </>
       );
-    } else if (claimMethod === "transfer") {
+    } else if (paramClaimMethod === "transfer") {
       return (
-        <React.Fragment>
+        <>
           <TextField
             id="token-acc-text-field"
             label="Source Token Account"
@@ -1022,11 +1051,11 @@ export const Claim = (
             onChange={(e) => setTokenAcc(e.target.value)}
             disabled={!editable}
           />
-        </React.Fragment>
+        </>
       );
-    } else if (claimMethod === "edition") {
+    } else if (paramClaimMethod === "edition") {
       return (
-        <React.Fragment>
+        <>
           <TextField
             id="master-mint-text-field"
             label="Master Mint"
@@ -1041,13 +1070,13 @@ export const Claim = (
             onChange={(e) => setEditionStr(e.target.value)}
             disabled={!editable}
           />
-        </React.Fragment>
+        </>
       );
     }
   };
 
-  const populateClaimC = (onClick) => (
-    <React.Fragment>
+  const populateClaimC = (onClick: any) => (
+    <>
       <TextField
         id="distributor-text-field"
         label="Distributor"
@@ -1071,9 +1100,9 @@ export const Claim = (
           style={{textAlign: "left"}}
           disabled={!editable}
         >
-          <MenuItem value={"transfer"}>Token Transfer</MenuItem>
-          <MenuItem value={"candy"}>Candy Machine</MenuItem>
-          <MenuItem value={"edition"}>Limited Edition</MenuItem>
+          <MenuItem value="transfer">Token Transfer</MenuItem>
+          <MenuItem value="candy">Candy Machine</MenuItem>
+          <MenuItem value="edition">Limited Edition</MenuItem>
         </Select>
       </FormControl>
       {claimMethod !== "" && claimData(claimMethod)}
@@ -1122,51 +1151,20 @@ export const Claim = (
       <Box />
 
       <Box sx={{ position: "relative" }}>
-      <Button
-        disabled={!wallet.connected || !allFieldsPopulated || loading}
-        variant="contained"
-        style={{ width: "100%" }}
-        color={asyncNeedsTemporalSigner ? "primary" : "success"}
-        onClick={(e) => {
-          setLoading(true);
-          const wrap = async () => {
-            try {
-              const needsTemporalSigner = await fetchNeedsTemporalSigner(
-                  connection, distributor, indexStr, claimMethod);
-              const transaction = await sendOTP(e);
-              if (!needsTemporalSigner) {
-                await verifyOTP(e, transaction);
-              } else {
-                setTransaction(transaction);
-              }
-              setLoading(false);
-              onClick();
-            } catch (err) {
-              notify({
-                message: "Claim failed",
-                description: `${err}`,
-              });
-              setLoading(false);
-            }
-          };
-          wrap();
-        }}
-      >
-        {asyncNeedsTemporalSigner ? "Next" : "Claim Gumdrop"}
-      </Button>
+
       {loading && loadingProgress()}
       </Box>
-    </React.Fragment>
+    </>
   );
 
   const steps = [
     { name: "Populate Claim", inner: populateClaimC },
   ];
-  if (asyncNeedsTemporalSigner) {
-    steps.push(
-    { name: "Verify OTP"    , inner: verifyOTPC     }
-    );
-  }
+  // if (asyncNeedsTemporalSigner) {
+  //   steps.push(
+  //   { name: "Verify OTP"    , inner: verifyOTPC     }
+  //   );
+  // }
 
   // TODO: better interaction between setting `asyncNeedsTemporalSigner` and
   // the stepper... this is pretty jank
@@ -1188,18 +1186,16 @@ export const Claim = (
   };
 
   const stepper = (
-    <React.Fragment>
+    <>
       <Stepper activeStep={stepToUse}>
-        {steps.map(s => {
-          return (
+        {steps.map(s => (
             <Step key={s.name}>
               <StepLabel>{s.name}</StepLabel>
             </Step>
-          );
-        })}
+          ))}
       </Stepper>
       <Box />
-    </React.Fragment>
+    </>
   );
 
   return (

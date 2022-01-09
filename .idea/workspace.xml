@@ -8,26 +8,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f65d75de-ccea-4172-84f9-235231ad3916" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/bak/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bak/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cli/.eslintrc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/webServers.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Readme.MD" beforeDir="false" afterPath="$PROJECT_DIR$/Readme.MD" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/.nvmrc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/cli/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/src/gumdrop-cli.ts" beforeDir="false" afterPath="$PROJECT_DIR$/cli/src/gumdrop-cli.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/src/helpers/accounts.ts" beforeDir="false" afterPath="$PROJECT_DIR$/cli/src/helpers/accounts.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/src/helpers/gumdrop/claimant.ts" beforeDir="false" afterPath="$PROJECT_DIR$/cli/src/helpers/gumdrop/claimant.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/src/helpers/gumdrop/communication.ts" beforeDir="false" afterPath="$PROJECT_DIR$/cli/src/helpers/gumdrop/communication.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/src/helpers/instructions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/cli/src/helpers/instructions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/src/helpers/metadata.ts" beforeDir="false" afterPath="$PROJECT_DIR$/cli/src/helpers/metadata.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/src/helpers/transactions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/cli/src/helpers/transactions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/src/helpers/various.ts" beforeDir="false" afterPath="$PROJECT_DIR$/cli/src/helpers/various.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/cli/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/bak/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/.eslintrc" beforeDir="false" afterPath="$PROJECT_DIR$/UI/.eslintrc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/UI/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/components/Centered.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/components/Claim.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/components/Claim.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/components/Close.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/components/Create.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/components/DefaultModal/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/components/DefaultModal/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/components/DragAndDrop.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/components/Header/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/components/Header/Header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/components/Settings/index.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/contexts/WalletContext/WalletContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/contexts/WalletContext/WalletContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/utils/accounts.ts" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/utils/accounts.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +47,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/cli" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/UI" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="yarn" />
@@ -64,6 +58,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\BlockChain\Solana\projects\chick-distributor\UI" />
       <recent name="D:\BlockChain\Solana\projects\chick-distributor\cli" />
     </key>
   </component>
@@ -95,7 +90,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1641698130587</updated>
-      <workItem from="1641698134040" duration="2773000" />
+      <workItem from="1641698134040" duration="8925000" />
     </task>
     <servers />
   </component>

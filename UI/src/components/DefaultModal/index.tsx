@@ -20,7 +20,6 @@ export const DefaultModal = (props: any) => {
       width={
         width || 400
       }
-      {...rest}
     >
       {children}
     </Modal>

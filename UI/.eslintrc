@@ -27,6 +27,13 @@
     "no-use-before-define": "off",
     "no-param-reassign": "off",
     "no-empty": "off",
+    "no-empty-function": "off",
+    "no-restricted-globals": "off",
+    "no-else-return": "off",
+    "no-nested-ternary": "off",
+    "no-restricted-syntax": "off",
+    "jsx-props-no-spreading": "off",
+    "no-underscore-dangle": "off",
     "@typescript-eslint/no-use-before-define": [
       "error"
     ],

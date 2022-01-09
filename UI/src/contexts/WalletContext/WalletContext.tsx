@@ -51,70 +51,7 @@ export const WalletModal: FC = () => {
   }, [setVisible, setShowWallets]);
 
   return (
-    <DefaultModal visible={visible} onCancel={close}>
-      <div
-        style={{
-          background:
-            "linear-gradient(180deg, #D329FC 0%, #8F6DDE 49.48%, #19E6AD 100%)",
-          borderRadius: 36,
-          width: 50,
-          height: 50,
-          textAlign: "center",
-          verticalAlign: "middle",
-          fontWeight: 700,
-          fontSize: "1.3rem",
-          lineHeight: 2.4,
-          marginBottom: 10,
-        }}
-      ></div>
-      <h2
-        style={{
-          color: "white",
-          fontWeight: "bold",
-          fontSize: "1.2rem",
-        }}
-      >
-        {selected ? "Change provider" : ""}
-      </h2>
-      <p style={{ color: "white", fontSize: "1rem"}}>
-        {selected
-          ? "Choose from the following options:"
-          : "Please sign into your wallet"}
-      </p>
-
-      <br />
-      {wallets.map((wallet) => {
-        return (
-          <Button
-            key={wallet.name}
-            size="large"
-            type={wallet === selected ? "primary" : "ghost"}
-            onClick={() => {
-              select(wallet.name);
-              close();
-            }}
-            icon={
-              <img
-                alt={`${wallet.name}`}
-                width={20}
-                height={20}
-                src={wallet.icon}
-                style={{ marginRight: 30, float: "left" }}
-              />
-            }
-            style={{
-              display: "block",
-              width: "100%",
-              textAlign: "left",
-              marginBottom: 8,
-              color: "white",
-            }}
-          >
-            {wallet.name}
-          </Button>
-        );
-      })}
-    </DefaultModal>
+    <div>Test</div>
   );
 };
 
@@ -138,7 +75,7 @@ export const WalletModalProvider: FC<{ children: ReactNode }> = ({
 
       notify({
         message: "Wallet update",
-        description: "Connected to wallet " + keyToDisplay,
+        description: `Connected to wallet ${  keyToDisplay}`,
       });
     }
   }, [publicKey]);
