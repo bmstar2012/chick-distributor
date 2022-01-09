@@ -4,13 +4,13 @@ import * as path from 'path';
 import { program } from 'commander';
 import log from 'loglevel';
 
-import {
-  SESv2Client,
-  CreateContactListCommand,
-  GetContactCommand,
-} from '@aws-sdk/client-sesv2';
+// import {
+//   SESv2Client,
+//   CreateContactListCommand,
+//   GetContactCommand,
+// } from '@aws-sdk/client-sesv2';
 import * as anchor from '@project-serum/anchor';
-import * as discord from 'discord.js';
+// import * as discord from 'discord.js';
 import {
   Commitment,
   Connection as RPCConnection,
@@ -30,23 +30,23 @@ import {
   dropInfoFor,
   parseClaimants,
   validateTransferClaims,
-  validateCandyClaims,
-  validateEditionClaims,
+  // validateCandyClaims,
+  // validateEditionClaims,
 } from './helpers/gumdrop/claimant';
 import {
-  AuthKeys,
-  DropInfo,
-  Response as DResponse,
-  distributeAwsSes,
-  distributeAwsSns,
+//   AuthKeys,
+//   DropInfo,
+//   Response as DResponse,
+//   distributeAwsSes,
+//   distributeAwsSns,
   distributeManual,
   distributeWallet,
-  formatDropMessage,
+//   formatDropMessage,
   urlAndHandleFor,
 } from './helpers/gumdrop/communication';
 import {
-  GUMDROP_TEMPORAL_SIGNER,
-  GUMDROP_DISTRIBUTOR_ID,
+  CHICK_TEMPORAL_SIGNER,
+  CHICK_DISTRIBUTOR_ID,
 } from './helpers/constants';
 import { sendSignedTransaction } from './helpers/transactions';
 
@@ -108,37 +108,39 @@ programCommand('create')
       options.rpcUrl || anchor.web3.clusterApiUrl(options.env),
     );
 
-    const getTemporalSigner = auth => {
-      switch (auth) {
-        case 'default':
-          return GUMDROP_TEMPORAL_SIGNER;
-        case 'none':
-          return PublicKey.default;
-        default:
-          throw new Error(`Unknown OTP authorization type ${auth}`);
-      }
-    };
+    // const getTemporalSigner = auth => {
+    //   switch (auth) {
+    //     case 'default':
+    //       return GUMDROP_TEMPORAL_SIGNER;
+    //     case 'none':
+    //       return PublicKey.default;
+    //     default:
+    //       throw new Error(`Unknown OTP authorization type ${auth}`);
+    //   }
+    // };
 
     if (!options.host) {
       throw new Error('No host website specified');
     }
 
     let temporalSigner;
-    switch (options.distributionMethod) {
-      case 'wallets':
-        temporalSigner = GUMDROP_DISTRIBUTOR_ID;
-        break;
-      case 'manual':
-      case 'aws-email':
-      case 'aws-sms':
-      case 'discord':
-        temporalSigner = getTemporalSigner(options.otpAuth);
-        break;
-      default:
-        throw new Error(
-          "Distribution method must either be 'aws-email', 'aws-sms', 'discord', 'manual', or 'wallets'.",
-        );
-    }
+    temporalSigner = CHICK_DISTRIBUTOR_ID;
+
+    // switch (options.distributionMethod) {
+    //   case 'wallets':
+    //     temporalSigner = GUMDROP_DISTRIBUTOR_ID;
+    //     break;
+    //   case 'manual':
+    //   case 'aws-email':
+    //   case 'aws-sms':
+    //   case 'discord':
+    //     temporalSigner = getTemporalSigner(options.otpAuth);
+    //     break;
+    //   default:
+    //     throw new Error(
+    //       "Distribution method must either be 'aws-email', 'aws-sms', 'discord', 'manual', or 'wallets'.",
+    //     );
+    // }
     console.log(`temporal signer: ${temporalSigner.toBase58()}`);
 
     let claimantsStr;
@@ -171,93 +173,98 @@ programCommand('create')
           return distributeWallet({}, '', claimants, dropInfo);
         case 'manual':
           return distributeManual({}, '', claimants, dropInfo);
-        case 'aws-email':
-          return distributeAwsSes(
-            {
-              accessKeyId: options.awsSesAccessKeyId,
-              secretAccessKey: options.awsSesSecretAccessKey,
-            },
-            'santa@aws.metaplex.com',
-            claimants,
-            dropInfo,
-          );
-        case 'aws-sms':
-          return distributeAwsSns(
-            {
-              accessKeyId: options.awsSesAccessKeyId,
-              secretAccessKey: options.awsSesSecretAccessKey,
-            },
-            '',
-            claimants,
-            dropInfo,
-          );
-        case 'discord':
-          return distributeDiscord(
-            {
-              botToken: options.discordToken,
-              guild: options.discordGuild,
-            },
-            '',
-            claimants,
-            dropInfo,
-          );
+        // case 'aws-email':
+        //   return distributeAwsSes(
+        //     {
+        //       accessKeyId: options.awsSesAccessKeyId,
+        //       secretAccessKey: options.awsSesSecretAccessKey,
+        //     },
+        //     'santa@aws.metaplex.com',
+        //     claimants,
+        //     dropInfo,
+        //   );
+        // case 'aws-sms':
+        //   return distributeAwsSns(
+        //     {
+        //       accessKeyId: options.awsSesAccessKeyId,
+        //       secretAccessKey: options.awsSesSecretAccessKey,
+        //     },
+        //     '',
+        //     claimants,
+        //     dropInfo,
+        //   );
+        // case 'discord':
+        //   return distributeDiscord(
+        //     {
+        //       botToken: options.discordToken,
+        //       guild: options.discordGuild,
+        //     },
+        //     '',
+        //     claimants,
+        //     dropInfo,
+        //   );
       }
     };
     console.log("here 206", claimants, dropInfo);
     await distribute([]); // check that auth is correct...
+    //
+    // if (options.resendOnly) {
+    //   if (claimants.some(c => typeof c.url !== 'string')) {
+    //     throw new Error(
+    //       "Specified resend only but not all claimants have a 'url'",
+    //     );
+    //   }
+    //   const responses = await distribute(claimants);
+    //   // TODO: old path.1?
+    //   const respPath = logPath(
+    //     options.env,
+    //     `resp-${Keypair.generate().publicKey.toBase58()}.json`,
+    //   );
+    //   console.log(`writing responses to ${respPath}`);
+    //   fs.writeFileSync(respPath, JSON.stringify(responses));
+    //   return;
+    // }
 
-    if (options.resendOnly) {
-      if (claimants.some(c => typeof c.url !== 'string')) {
-        throw new Error(
-          "Specified resend only but not all claimants have a 'url'",
-        );
-      }
-      const responses = await distribute(claimants);
-      // TODO: old path.1?
-      const respPath = logPath(
-        options.env,
-        `resp-${Keypair.generate().publicKey.toBase58()}.json`,
-      );
-      console.log(`writing responses to ${respPath}`);
-      fs.writeFileSync(respPath, JSON.stringify(responses));
-      return;
-    }
-
-    let claimInfo;
-    switch (options.claimIntegration) {
-      case 'transfer': {
-        claimInfo = await validateTransferClaims(
-          connection,
-          wallet.publicKey,
-          claimants,
-          options.transferMint,
-        );
-        break;
-      }
-      case 'candy': {
-        claimInfo = await validateCandyClaims(
-          connection,
-          wallet.publicKey,
-          claimants,
-          options.candyConfig,
-          options.candyUuid,
-        );
-        break;
-      }
-      case 'edition': {
-        claimInfo = await validateEditionClaims(
-          connection,
-          wallet.publicKey,
-          claimants,
-          options.editionMint,
-        );
-        break;
-      }
-      default:
-        throw new Error(
-          "Claim integration must either be 'transfer', 'candy', or 'edition'.",
-        );
-    }
+    let claimInfo = await validateTransferClaims(
+      connection,
+      wallet.publicKey,
+      claimants,
+      options.transferMint,
+    );
+    // switch (options.claimIntegration) {
+    //   case 'transfer': {
+    //     claimInfo = await validateTransferClaims(
+    //       connection,
+    //       wallet.publicKey,
+    //       claimants,
+    //       options.transferMint,
+    //     );
+    //     break;
+    //   }
+    //   case 'candy': {
+    //     claimInfo = await validateCandyClaims(
+    //       connection,
+    //       wallet.publicKey,
+    //       claimants,
+    //       options.candyConfig,
+    //       options.candyUuid,
+    //     );
+    //     break;
+    //   }
+    //   case 'edition': {
+    //     claimInfo = await validateEditionClaims(
+    //       connection,
+    //       wallet.publicKey,
+    //       claimants,
+    //       options.editionMint,
+    //     );
+    //     break;
+    //   }
+    //   default:
+    //     throw new Error(
+    //       "Claim integration must either be 'transfer', 'candy', or 'edition'.",
+    //     );
+    // }
 
     claimants.forEach(c => {
       c.pin = new BN(randomBytes());
@@ -414,74 +421,74 @@ programCommand('close')
     }
   });
 
-programCommand('create_contact_list')
-  .option('--cli-input-json <filename>')
-  .option('--aws-ses-access-key-id <string>', 'Access Key Id')
-  .option('--aws-ses-secret-access-key <string>', 'Secret Access Key')
-  .addHelpText(
-    'before',
-    'A thin wrapper mimicking `aws sesv2 create-contact-list`',
-  )
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  .action(async (options, cmd) => {
-    log.info(`Parsed options:`, options);
+// programCommand('create_contact_list')
+//   .option('--cli-input-json <filename>')
+//   .option('--aws-ses-access-key-id <string>', 'Access Key Id')
+//   .option('--aws-ses-secret-access-key <string>', 'Secret Access Key')
+//   .addHelpText(
+//     'before',
+//     'A thin wrapper mimicking `aws sesv2 create-contact-list`',
+//   )
+//   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//   .action(async (options, cmd) => {
+//     log.info(`Parsed options:`, options);
+//
+//     let message;
+//     try {
+//       message = JSON.parse(fs.readFileSync(options.cliInputJson).toString());
+//     } catch (err) {
+//       throw new Error(`Could not read distribution list ${err}`);
+//     }
+//
+//     const client = new SESv2Client({
+//       region: 'us-east-2',
+//       credentials: {
+//         accessKeyId: options.awsSesAccessKeyId,
+//         secretAccessKey: options.awsSesSecretAccessKey,
+//       },
+//     });
+//
+//     try {
+//       const response = await client.send(new CreateContactListCommand(message));
+//       log.debug(response);
+//       if (response.$metadata.httpStatusCode !== 200) {
+//         //   throw new Error(`AWS SES ssemed to fail to send email: ${response[0].reject_reason}`);
+//       }
+//     } catch (err) {
+//       log.error(err);
+//     }
+//     log.info(`Created contact list ${message.ContactListName}`);
+//   });
 
-    let message;
-    try {
-      message = JSON.parse(fs.readFileSync(options.cliInputJson).toString());
-    } catch (err) {
-      throw new Error(`Could not read distribution list ${err}`);
-    }
-
-    const client = new SESv2Client({
-      region: 'us-east-2',
-      credentials: {
-        accessKeyId: options.awsSesAccessKeyId,
-        secretAccessKey: options.awsSesSecretAccessKey,
-      },
-    });
-
-    try {
-      const response = await client.send(new CreateContactListCommand(message));
-      log.debug(response);
-      if (response.$metadata.httpStatusCode !== 200) {
-        //   throw new Error(`AWS SES ssemed to fail to send email: ${response[0].reject_reason}`);
-      }
-    } catch (err) {
-      log.error(err);
-    }
-    log.info(`Created contact list ${message.ContactListName}`);
-  });
-
-programCommand('get_contact')
-  .argument('<email>', 'email address to query')
-  .option('--aws-ses-access-key-id <string>', 'Access Key Id')
-  .option('--aws-ses-secret-access-key <string>', 'Secret Access Key')
-  .addHelpText('before', 'A thin wrapper mimicking `aws sesv2 get-contact`')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  .action(async (email, options, cmd) => {
-    log.info(`Parsed options:`, options);
-
-    const client = new SESv2Client({
-      region: 'us-east-2',
-      credentials: {
-        accessKeyId: options.awsSesAccessKeyId,
-        secretAccessKey: options.awsSesSecretAccessKey,
-      },
-    });
-
-    try {
-      const response = await client.send(
-        new GetContactCommand({
-          ContactListName: 'Gumdrop',
-          EmailAddress: email,
-        }),
-      );
-      console.log(response);
-    } catch (err) {
-      log.error(err);
-    }
-  });
+// programCommand('get_contact')
+//   .argument('<email>', 'email address to query')
+//   .option('--aws-ses-access-key-id <string>', 'Access Key Id')
+//   .option('--aws-ses-secret-access-key <string>', 'Secret Access Key')
+//   .addHelpText('before', 'A thin wrapper mimicking `aws sesv2 get-contact`')
+//   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//   .action(async (email, options, cmd) => {
+//     log.info(`Parsed options:`, options);
+//
+//     const client = new SESv2Client({
+//       region: 'us-east-2',
+//       credentials: {
+//         accessKeyId: options.awsSesAccessKeyId,
+//         secretAccessKey: options.awsSesSecretAccessKey,
+//       },
+//     });
+//
+//     try {
+//       const response = await client.send(
+//         new GetContactCommand({
+//           ContactListName: 'Gumdrop',
+//           EmailAddress: email,
+//         }),
+//       );
+//       console.log(response);
+//     } catch (err) {
+//       log.error(err);
+//     }
+//   });
 
 function programCommand(name: string) {
   return program
@@ -560,60 +567,60 @@ async function sendTransactionWithRetry(
   });
 }
 
-async function distributeDiscord(
-  auth: AuthKeys,
-  source: string,
-  claimants: Claimants,
-  drop: DropInfo,
-) {
-  if (!auth.botToken || !auth.guild) {
-    throw new Error('Discord auth keys not supplied');
-  }
-  if (claimants.length === 0) return [];
-  log.debug('Discord auth', auth);
-
-  const client = new discord.Client();
-  await client.login(auth.botToken);
-
-  const guild = await client.guilds.fetch(auth.guild);
-
-  const members = await guild.members.fetch({
-    user: claimants.map(c => c.handle),
-  });
-
-  const single = async (info: ClaimantInfo, drop: DropInfo) => {
-    const user = members.get(info.handle);
-    if (user === undefined) {
-      return {
-        status: 'error',
-        handle: info.handle,
-        error: 'notfound',
-      };
-    }
-    const formatted = formatDropMessage(info, drop, false);
-    const response = await (user as any).send(formatted.message);
-    // canonoical way to check if message succeeded?
-    if (response.id) {
-      return {
-        status: 'success',
-        handle: info.handle,
-        messageId: response.id,
-      };
-    } else {
-      return {
-        status: 'error',
-        handle: info.handle,
-        error: response, // TODO
-      };
-    }
-  };
-
-  const responses = Array<DResponse>();
-  for (const c of claimants) {
-    responses.push(await single(c, drop));
-  }
-  client.destroy();
-  return responses;
-}
+// async function distributeDiscord(
+//   auth: AuthKeys,
+//   source: string,
+//   claimants: Claimants,
+//   drop: DropInfo,
+// ) {
+//   if (!auth.botToken || !auth.guild) {
+//     throw new Error('Discord auth keys not supplied');
+//   }
+//   if (claimants.length === 0) return [];
+//   log.debug('Discord auth', auth);
+//
+//   const client = new discord.Client();
+//   await client.login(auth.botToken);
+//
+//   const guild = await client.guilds.fetch(auth.guild);
+//
+//   const members = await guild.members.fetch({
+//     user: claimants.map(c => c.handle),
+//   });
+//
+//   const single = async (info: ClaimantInfo, drop: DropInfo) => {
+//     const user = members.get(info.handle);
+//     if (user === undefined) {
+//       return {
+//         status: 'error',
+//         handle: info.handle,
+//         error: 'notfound',
+//       };
+//     }
+//     const formatted = formatDropMessage(info, drop, false);
+//     const response = await (user as any).send(formatted.message);
+//     // canonoical way to check if message succeeded?
+//     if (response.id) {
+//       return {
+//         status: 'success',
+//         handle: info.handle,
+//         messageId: response.id,
+//       };
+//     } else {
+//       return {
+//         status: 'error',
+//         handle: info.handle,
+//         error: response, // TODO
+//       };
+//     }
+//   };
+//
+//   const responses = Array<DResponse>();
+//   for (const c of claimants) {
+//     responses.push(await single(c, drop));
+//   }
+//   client.destroy();
+//   return responses;
+// }
 
 program.parse(process.argv);

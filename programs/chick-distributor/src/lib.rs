@@ -96,13 +96,15 @@ pub mod merkle_distributor {
     ) -> ProgramResult {
         let distributor = &mut ctx.accounts.distributor;
 
-        msg!("new_distributor");
+        msg!("new_distributor - start");
 
         distributor.base = ctx.accounts.base.key();
         distributor.bump = bump;
 
         distributor.root = root;
         distributor.temporal = temporal;
+
+        msg!("new_distributor - end");
 
         Ok(())
     }
@@ -229,16 +231,20 @@ pub mod merkle_distributor {
         proof: Vec<[u8; 32]>,
     ) -> ProgramResult {
         let claim_status = &mut ctx.accounts.claim_status;
+        msg!("claim - step1 {}", *claim_status.to_account_info().owner);
+        msg!("claim - step1 {}", ID);
+
         require!(
             *claim_status.to_account_info().owner == ID,
             OwnerMismatch
         );
+        msg!("claim - step2");
         require!(
             // This check is redudant, we should not be able to initialize a claim status account at the same key.
             !claim_status.is_claimed && claim_status.claimed_at == 0,
             DropAlreadyClaimed
         );
-
+        msg!("claim - step3");
         let distributor = &ctx.accounts.distributor;
         let mint = ctx.accounts.from.mint;
 
@@ -254,6 +260,7 @@ pub mod merkle_distributor {
             merkle_proof::verify(proof, distributor.root, node.0),
             InvalidProof
         );
+        msg!("claim - step4");
 
         // Mark it claimed and send the tokens.
         claim_status.amount = amount;
@@ -267,7 +274,7 @@ pub mod merkle_distributor {
             &distributor.base.to_bytes(),
             &[ctx.accounts.distributor.bump],
         ];
-
+        msg!("claim - step5");
         require!(
             ctx.accounts.temporal.key() == distributor.temporal
             || ctx.accounts.temporal.key() == claimant_secret
@@ -287,12 +294,13 @@ pub mod merkle_distributor {
                 .with_signer(&[&seeds[..]]),
             amount,
         )?;
-
+        msg!("claim - step6");
         emit!(ClaimedEvent {
             index,
             claimant: ctx.accounts.payer.key(),
             amount
         });
+        msg!("claim - end");
         Ok(())
     }
 
