@@ -9,19 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f65d75de-ccea-4172-84f9-235231ad3916" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/.eslintrc" beforeDir="false" afterPath="$PROJECT_DIR$/UI/.eslintrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/UI/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/components/Centered.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/components/Claim.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/components/Claim.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/components/Close.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/components/Create.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/components/DefaultModal/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/components/DefaultModal/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/components/DragAndDrop.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/components/Header/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/components/Header/Header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/components/Settings/index.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/contexts/WalletContext/WalletContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/contexts/WalletContext/WalletContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/utils/accounts.ts" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/utils/accounts.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Readme.MD" beforeDir="false" afterPath="$PROJECT_DIR$/Readme.MD" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cli/src/gumdrop-cli.ts" beforeDir="false" afterPath="$PROJECT_DIR$/cli/src/gumdrop-cli.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +79,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1641698130587</updated>
-      <workItem from="1641698134040" duration="8925000" />
+      <workItem from="1641698134040" duration="13214000" />
     </task>
     <servers />
   </component>

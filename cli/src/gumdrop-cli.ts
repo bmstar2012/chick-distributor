@@ -97,7 +97,7 @@ programCommand('create')
   .option(
     '--host <string>',
     'Website to claim gumdrop',
-    'http://localhost:3001/gumdrop', //'https://lwus.github.io/gumdrop',
+    'http://localhost:3000/gumdrop', //'https://lwus.github.io/gumdrop',
   )
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   .action(async (options, cmd) => {
