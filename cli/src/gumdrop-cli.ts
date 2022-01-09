@@ -63,6 +63,7 @@ programCommand('create')
   .option(
     '--claim-integration <method>',
     'Backend for claims. Either `transfer` for token-transfers through approve-delegate, `candy` for minting through a candy-machine, or `edition` for minting through a master edition',
+    'transfer'
   )
   .option('--transfer-mint <mint>', 'transfer: public key of mint')
   .option(
@@ -78,6 +79,7 @@ programCommand('create')
     '--distribution-method <method>',
     // TODO: more explanation
     'Off-chain distribution of claims. Either `aws-email`, `aws-sms`, `discord`, `manual`, or `wallets`',
+    'wallets'
   )
   .option('--aws-ses-access-key-id <string>', 'Access Key Id')
   .option('--aws-ses-secret-access-key <string>', 'Secret Access Key')
@@ -95,7 +97,7 @@ programCommand('create')
   .option(
     '--host <string>',
     'Website to claim gumdrop',
-    'https://lwus.github.io/gumdrop',
+    'http://localhost:3001/gumdrop', //'https://lwus.github.io/gumdrop',
   )
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   .action(async (options, cmd) => {

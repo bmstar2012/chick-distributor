@@ -2,7 +2,7 @@
   "name": "gumdrop",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://lwus.github.io/gumdrop/",
+  "homepage": "http://localhost:3001/gumdrop/",
   "dependencies": {
     "@aws-sdk/client-lambda": "^3.38.0",
     "@aws-sdk/client-sesv2": "^3.38.0",
@@ -56,6 +56,7 @@
     "i": "^0.3.7",
     "identicon.js": "^2.3.3",
     "jazzicon": "^1.5.0",
+    "js-sha256": "^0.9.0",
     "lodash": "^4.17.20",
     "loglevel": "^1.7.1",
     "material-components-web": "^13.0.0",
@@ -64,6 +65,7 @@
     "moment": "^2.29.1",
     "npm": "^8.3.0",
     "oyster-common": "0.0.2",
+    "query-string": "^7.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.4",
@@ -80,10 +82,13 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:staging": "env-cmd -f .env.staging npm run build",
+    "build:production": "env-cmd -f .env.production npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "lint": "eslint --ext .ts src/*.tsx && prettier --check src/*.tsx",
+    "lint:fix": "eslint --ext .ts src/*.tsx --fix && prettier --write '{,src/**/}*.{ts,tsx,css,scss}'",
+    "prettify": "prettier --write '{,src/**/}*.{ts,tsx,css,scss}'"
   },
   "browserslist": {
     "production": [
@@ -97,7 +102,39 @@
       "last 1 safari version"
     ]
   },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
   "devDependencies": {
-    "gh-pages": "^3.2.3"
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/bn.js": "^5.1.0",
+    "@types/eslint": "^7.2.4",
+    "@types/eslint-plugin-prettier": "^3.1.0",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/prettier": "^2.1.5",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.15.1",
+    "@typescript-eslint/parser": "^4.15.1",
+    "chai": "^4.3.4",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.20.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "gh-pages": "^3.2.3",
+    "node-sass": "^6.0.1",
+    "prettier": "^2.5.1",
+    "sass-loader": "^11.1.1"
   }
 }

@@ -641,7 +641,8 @@ export const Claim = (
   }
 
   const params = queryString.parse(query);
-  const [distributor, setDistributor] = React.useState(params.distributor as string || "");
+
+  const [distributor, setDistributor] = React.useState((params.distributor as string || ""));
   const [claimMethod, setClaimMethod] = React.useState(
         params.tokenAcc ? "transfer"
       : params.config   ? "candy"
