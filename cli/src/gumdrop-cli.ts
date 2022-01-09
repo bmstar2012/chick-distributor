@@ -1,5 +1,4 @@
-#!/usr/bin/env ts-node
-import * as fs from 'fs';
+import fs from 'fs';
 import * as path from 'path';
 import { program } from 'commander';
 import log from 'loglevel';
@@ -45,7 +44,7 @@ import {
   urlAndHandleFor,
 } from './helpers/gumdrop/communication';
 import {
-  CHICK_TEMPORAL_SIGNER,
+  // CHICK_TEMPORAL_SIGNER,
   CHICK_DISTRIBUTOR_ID,
 } from './helpers/constants';
 import { sendSignedTransaction } from './helpers/transactions';
@@ -298,6 +297,7 @@ programCommand('create')
 
     const basePath = logPath(options.env, `${base.publicKey.toBase58()}.json`);
     console.log(`writing base to ${basePath}`);
+    // @ts-ignore
     fs.writeFileSync(basePath, JSON.stringify([...base.secretKey]));
 
     const urlPath = logPath(
@@ -508,7 +508,7 @@ function programCommand(name: string) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function setLogLevel(value, prev) {
+function setLogLevel(value: any, prev: any) {
   if (value === undefined || value === null) {
     return;
   }
@@ -516,7 +516,7 @@ function setLogLevel(value, prev) {
   log.setLevel(value);
 }
 
-function loadWalletKey(keypair): Keypair {
+function loadWalletKey(keypair: string): Keypair {
   if (!keypair || keypair == '') {
     throw new Error('Keypair is required!');
   }

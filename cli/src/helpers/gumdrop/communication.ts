@@ -11,56 +11,56 @@ export type DropInfo = {
   type: string;
   meta: string;
 };
-
-export const formatDropMessage = (
-  info: ClaimantInfo,
-  drop: DropInfo,
-  html: boolean,
-) => {
-  const wrap = (url, text) => {
-    if (html) {
-      return `<a href="${url}">${text}</a>`;
-    } else {
-      return `${text} ${url}`;
-    }
-  };
-  if (drop.type === 'Token') {
-    return {
-      subject: 'Gumdrop Token Drop',
-      message:
-        `You received ${info.amount} token(s) ` +
-        `(click ${wrap(
-          drop.meta,
-          'here',
-        )} to view more information about the token mint). ` +
-        wrap(info.url, 'Click here to claim them!'),
-    };
-  } else if (drop.type === 'Candy') {
-    return {
-      subject: 'Gumdrop NFT Drop',
-      message:
-        `You received ${info.amount} Candy Machine pre-sale mint(s) ` +
-        `(click ${wrap(
-          drop.meta,
-          'here',
-        )} to view the candy machine configuration on explorer). ` +
-        wrap(info.url, 'Click here to claim them!'),
-    };
-  } else if (drop.type === 'Edition') {
-    return {
-      subject: 'Gumdrop NFT Drop',
-      message:
-        `You received ${info.amount} limited-edition print(s) ` +
-        `(click ${wrap(
-          drop.meta,
-          'here',
-        )} to view the master edition mint on explorer). ` +
-        wrap(info.url, 'Click here to claim them!'),
-    };
-  } else {
-    throw new Error(`Internal Error: Unknown drop type ${drop.type}`);
-  }
-};
+//
+// export const formatDropMessage = (
+//   info: ClaimantInfo,
+//   drop: DropInfo,
+//   html: boolean,
+// ) => {
+//   const wrap = (url, text) => {
+//     if (html) {
+//       return `<a href="${url}">${text}</a>`;
+//     } else {
+//       return `${text} ${url}`;
+//     }
+//   };
+//   if (drop.type === 'Token') {
+//     return {
+//       subject: 'Gumdrop Token Drop',
+//       message:
+//         `You received ${info.amount} token(s) ` +
+//         `(click ${wrap(
+//           drop.meta,
+//           'here',
+//         )} to view more information about the token mint). ` +
+//         wrap(info.url, 'Click here to claim them!'),
+//     };
+//   } else if (drop.type === 'Candy') {
+//     return {
+//       subject: 'Gumdrop NFT Drop',
+//       message:
+//         `You received ${info.amount} Candy Machine pre-sale mint(s) ` +
+//         `(click ${wrap(
+//           drop.meta,
+//           'here',
+//         )} to view the candy machine configuration on explorer). ` +
+//         wrap(info.url, 'Click here to claim them!'),
+//     };
+//   } else if (drop.type === 'Edition') {
+//     return {
+//       subject: 'Gumdrop NFT Drop',
+//       message:
+//         `You received ${info.amount} limited-edition print(s) ` +
+//         `(click ${wrap(
+//           drop.meta,
+//           'here',
+//         )} to view the master edition mint on explorer). ` +
+//         wrap(info.url, 'Click here to claim them!'),
+//     };
+//   } else {
+//     throw new Error(`Internal Error: Unknown drop type ${drop.type}`);
+//   }
+// };
 
 // export const distributeAwsSns = async (
 //   auth: AuthKeys,

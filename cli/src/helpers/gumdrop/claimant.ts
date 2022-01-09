@@ -16,9 +16,9 @@ import {
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import {
-  getCandyMachineAddress,
-  getEditionMarkPda,
-  getMasterEdition,
+  // getCandyMachineAddress,
+  // getEditionMarkPda,
+  // getMasterEdition,
   getTokenWallet,
 } from '../accounts';
 import {
@@ -341,133 +341,133 @@ const setEditionTaken = (marker: Array<number>, edition: BN) => {
   const m = getIndexAndMask(edition);
   marker[m.index] = marker[m.index] | m.mask;
 };
-
-export const validateEditionClaims = async (
-  connection: RPCConnection,
-  walletKey: PublicKey,
-  claimants: Claimants,
-  masterMintStr: string,
-): Promise<ClaimInfo> => {
-  claimants.forEach((c, idx) => {
-    if (!c.handle) throw new Error(`Claimant ${idx} doesn't have handle`);
-    if (c.amount !== 1) {
-      throw new Error(
-        `Claimant ${idx} has amount ${c.amount}. Expected 1 for edition gumdrop`,
-      );
-    }
-  });
-
-  const total = claimants.reduce((acc, c) => acc + c.amount, 0);
-  const masterMint = await getMintInfo(connection, masterMintStr);
-  const masterTokenAccount = await getCreatorTokenAccount(
-    walletKey,
-    connection,
-    masterMint.key,
-    1, // just check that the creator has the master mint
-  );
-
-  const masterEditionKey = await getMasterEdition(masterMint.key);
-  const masterEdition = await connection.getAccountInfo(masterEditionKey);
-  if (masterEdition === null) {
-    throw new Error(`Could not fetch master edition`);
-  }
-  console.log('Master edition', masterEdition);
-
-  // maxSupply is an option, 9 bytes, first is 0 means is none
-  const currentSupply = new BN(
-    masterEdition.data.slice(1, 1 + 8),
-    8,
-    'le',
-  ).toNumber();
-  let maxSupply;
-  if (masterEdition.data[9] === 0) {
-    maxSupply = null;
-  } else {
-    maxSupply = new BN(
-      masterEdition.data.slice(10, 10 + 8),
-      8,
-      'le',
-    ).toNumber();
-  }
-  console.log('Max supply', maxSupply);
-  console.log('Current supply', currentSupply);
-
-  if (maxSupply !== null && maxSupply < total) {
-    throw new Error(
-      `Distributor is allocated more editions (${total}) ` +
-        `than the master has total (${maxSupply})`,
-    );
-  }
-
-  // Whether an edition has been claimed is a single bit in a paginated account
-  // (pda off of master mint). The following code does some sanity checks
-  // around max supply and internally whether the distribution list has
-  // duplicate editions, and also checks if the editions were already taken on
-  // chain.
-  //
-  // There is a race condition since the authority to mint is still currently
-  // the wallet but it seems like a user error to have other editions being
-  // minted while a gumdrop is being created
-  const editions: { [key: number]: number } = {};
-  const editionMarkers: Array<[PublicKey, Array<number>]> = [];
-  for (let idx = 0; idx < claimants.length; ++idx) {
-    const c = claimants[idx];
-    if (c.edition === undefined)
-      throw new Error(`Claimant ${idx} doesn't have edition`);
-    if (c.edition <= 0) {
-      throw new Error(`Claimant ${idx} assigned invalid edition ${c.edition}`);
-    }
-    if (maxSupply !== null && c.edition > maxSupply) {
-      throw new Error(
-        `Claimant ${idx} assigned edition ${c.edition} which is beyond the max supply`,
-      );
-    }
-    if (c.edition in editions) {
-      throw new Error(
-        `Claimant ${idx} and ${
-          editions[c.edition]
-        } are both assigned to edition ${c.edition}`,
-      );
-    }
-    const edition = new BN(c.edition);
-    const markerKey = await getEditionMarkPda(
-      masterMint.key,
-      edition.toNumber(),
-    );
-    let markerData = editionMarkers.find(pm => pm[0].equals(markerKey));
-    if (markerData === undefined) {
-      const markerAcc = await connection.getAccountInfo(markerKey);
-      if (markerAcc === null) {
-        editionMarkers.push([markerKey, Array<number>(31)]);
-      } else {
-        editionMarkers.push([markerKey, [...markerAcc.data.slice(1, 32)]]);
-      }
-      markerData = editionMarkers[editionMarkers.length - 1];
-    }
-
-    if (markerData === undefined) {
-      throw new Error(
-        `Internal Error: Edition marker info still undefined ${c.edition}`,
-      );
-    }
-
-    if (editionTaken(markerData[1], edition)) {
-      throw new Error(
-        `Claimant ${idx} is assigned to edition ${c.edition} which is already taken`,
-      );
-    }
-
-    setEditionTaken(markerData[1], edition);
-
-    editions[c.edition] = idx;
-  }
-
-  return {
-    total: total,
-    masterMint: masterMint,
-    masterTokenAccount: masterTokenAccount,
-  };
-};
+//
+// export const validateEditionClaims = async (
+//   connection: RPCConnection,
+//   walletKey: PublicKey,
+//   claimants: Claimants,
+//   masterMintStr: string,
+// ): Promise<ClaimInfo> => {
+//   claimants.forEach((c, idx) => {
+//     if (!c.handle) throw new Error(`Claimant ${idx} doesn't have handle`);
+//     if (c.amount !== 1) {
+//       throw new Error(
+//         `Claimant ${idx} has amount ${c.amount}. Expected 1 for edition gumdrop`,
+//       );
+//     }
+//   });
+//
+//   const total = claimants.reduce((acc, c) => acc + c.amount, 0);
+//   const masterMint = await getMintInfo(connection, masterMintStr);
+//   const masterTokenAccount = await getCreatorTokenAccount(
+//     walletKey,
+//     connection,
+//     masterMint.key,
+//     1, // just check that the creator has the master mint
+//   );
+//
+//   const masterEditionKey = await getMasterEdition(masterMint.key);
+//   const masterEdition = await connection.getAccountInfo(masterEditionKey);
+//   if (masterEdition === null) {
+//     throw new Error(`Could not fetch master edition`);
+//   }
+//   console.log('Master edition', masterEdition);
+//
+//   // maxSupply is an option, 9 bytes, first is 0 means is none
+//   const currentSupply = new BN(
+//     masterEdition.data.slice(1, 1 + 8),
+//     8,
+//     'le',
+//   ).toNumber();
+//   let maxSupply;
+//   if (masterEdition.data[9] === 0) {
+//     maxSupply = null;
+//   } else {
+//     maxSupply = new BN(
+//       masterEdition.data.slice(10, 10 + 8),
+//       8,
+//       'le',
+//     ).toNumber();
+//   }
+//   console.log('Max supply', maxSupply);
+//   console.log('Current supply', currentSupply);
+//
+//   if (maxSupply !== null && maxSupply < total) {
+//     throw new Error(
+//       `Distributor is allocated more editions (${total}) ` +
+//         `than the master has total (${maxSupply})`,
+//     );
+//   }
+//
+//   // Whether an edition has been claimed is a single bit in a paginated account
+//   // (pda off of master mint). The following code does some sanity checks
+//   // around max supply and internally whether the distribution list has
+//   // duplicate editions, and also checks if the editions were already taken on
+//   // chain.
+//   //
+//   // There is a race condition since the authority to mint is still currently
+//   // the wallet but it seems like a user error to have other editions being
+//   // minted while a gumdrop is being created
+//   const editions: { [key: number]: number } = {};
+//   const editionMarkers: Array<[PublicKey, Array<number>]> = [];
+//   for (let idx = 0; idx < claimants.length; ++idx) {
+//     const c = claimants[idx];
+//     if (c.edition === undefined)
+//       throw new Error(`Claimant ${idx} doesn't have edition`);
+//     if (c.edition <= 0) {
+//       throw new Error(`Claimant ${idx} assigned invalid edition ${c.edition}`);
+//     }
+//     if (maxSupply !== null && c.edition > maxSupply) {
+//       throw new Error(
+//         `Claimant ${idx} assigned edition ${c.edition} which is beyond the max supply`,
+//       );
+//     }
+//     if (c.edition in editions) {
+//       throw new Error(
+//         `Claimant ${idx} and ${
+//           editions[c.edition]
+//         } are both assigned to edition ${c.edition}`,
+//       );
+//     }
+//     const edition = new BN(c.edition);
+//     const markerKey = await getEditionMarkPda(
+//       masterMint.key,
+//       edition.toNumber(),
+//     );
+//     let markerData = editionMarkers.find(pm => pm[0].equals(markerKey));
+//     if (markerData === undefined) {
+//       const markerAcc = await connection.getAccountInfo(markerKey);
+//       if (markerAcc === null) {
+//         editionMarkers.push([markerKey, Array<number>(31)]);
+//       } else {
+//         editionMarkers.push([markerKey, [...markerAcc.data.slice(1, 32)]]);
+//       }
+//       markerData = editionMarkers[editionMarkers.length - 1];
+//     }
+//
+//     if (markerData === undefined) {
+//       throw new Error(
+//         `Internal Error: Edition marker info still undefined ${c.edition}`,
+//       );
+//     }
+//
+//     if (editionTaken(markerData[1], edition)) {
+//       throw new Error(
+//         `Claimant ${idx} is assigned to edition ${c.edition} which is already taken`,
+//       );
+//     }
+//
+//     setEditionTaken(markerData[1], edition);
+//
+//     editions[c.edition] = idx;
+//   }
+//
+//   return {
+//     total: total,
+//     masterMint: masterMint,
+//     masterTokenAccount: masterTokenAccount,
+//   };
+// };
 
 export const chunk = (arr: Buffer, len: number): Array<Buffer> => {
   const chunks: Array<Buffer> = [];
@@ -795,7 +795,7 @@ export const closeGumdrop = async (
         { pubkey: walletKey, isSigner: true, isWritable: true },
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
         { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
-        ...extraKeys,
+        // ...extraKeys,
       ],
       data: Buffer.from([
         ...Buffer.from(sha256.digest('global:close_distributor')).slice(0, 8),

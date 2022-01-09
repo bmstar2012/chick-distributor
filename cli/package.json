@@ -1,47 +1,7 @@
 {
-  "name": "@metaplex/cli",
-  "version": "0.0.2",
-  "main": "./build/cli.js",
-  "license": "MIT",
-  "bin": {
-    "metaplex": "./build/candy-machine-cli.js"
-  },
-  "scripts": {
-    "build": "tsc -p ./src",
-    "watch": "tsc -w -p ./src",
-    "package:linux": "pkg . --no-bytecode --targets node14-linux-x64 --output bin/linux/metaplex",
-    "package:linuxb": "pkg . --targets node14-linux-x64 --output bin/linux/metaplex",
-    "package:win": "pkg . --targets node14-win-x64 --output bin/win/metaplex",
-    "package:macos-x64": "pkg . --targets node14-macos-x64 --output bin/macos/metaplex",
-    "package:macos-m1": "pkg . --targets node14-macos-arm64 --output bin/macos/metaplex",
-    "format": "prettier --loglevel warn --write \"**/*.{ts,js,json,yaml}\"",
-    "format:check": "prettier --loglevel warn --check \"**/*.{ts,js,json,yaml}\"",
-    "lint": "eslint \"src/**/*.ts\" --fix",
-    "lint:check": "eslint \"src/**/*.ts\"",
-    "test": "jest"
-  },
-  "pkg": {
-    "scripts": "./build/**/*.{js|json}"
-  },
-  "babel": {
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "targets": {
-            "node": "current"
-          }
-        }
-      ],
-      "@babel/preset-typescript"
-    ]
-  },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "<rootDir>/build/",
-      "<rootDir>/node_modules/"
-    ]
-  },
+  "name": "chicks-bridge-app",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
     "@aws-sdk/client-s3": "^3.36.0",
     "@bundlr-network/client": "^0.3.2",
@@ -54,6 +14,7 @@
     "canvas": "^2.8.0",
     "commander": "^8.1.0",
     "form-data": "^4.0.0",
+    "fs": "^0.0.1-security",
     "image-data-uri": "^2.0.1",
     "imagemin": "^7.0.1",
     "imagemin-pngquant": "^9.0.2",
@@ -64,6 +25,7 @@
     "merge-images": "^2.0.0",
     "mime": "^3.0.0",
     "node-fetch": "^2.6.1",
+    "path": "^0.12.7",
     "weighted": "^0.3.0"
   },
   "devDependencies": {
@@ -75,5 +37,20 @@
     "jest": "^27.4.5",
     "pkg": "^5.3.1",
     "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

@@ -4,31 +4,32 @@ import {
   SystemProgram,
   AccountInfo,
 } from '@solana/web3.js';
+import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import {
-  CANDY_MACHINE,
-  CANDY_MACHINE_PROGRAM_ID,
-  SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-  TOKEN_METADATA_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-  FAIR_LAUNCH_PROGRAM_ID,
-  AUCTION_HOUSE_PROGRAM_ID,
+  // CANDY_MACHINE,
+  // CANDY_MACHINE_PROGRAM_ID,
+  // SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+  // TOKEN_METADATA_PROGRAM_ID,
+  // TOKEN_PROGRAM_ID,
+  // FAIR_LAUNCH_PROGRAM_ID,
+  // AUCTION_HOUSE_PROGRAM_ID,
   AUCTION_HOUSE,
   FEE_PAYER,
   TREASURY,
-  WRAPPED_SOL_MINT,
-  TOKEN_ENTANGLEMENT_PROGRAM_ID,
+  // WRAPPED_SOL_MINT,
+  // TOKEN_ENTANGLEMENT_PROGRAM_ID,
   TOKEN_ENTANGLER,
   ESCROW,
   B,
   A,
-  CANDY_MACHINE_PROGRAM_V2_ID,
+  // CANDY_MACHINE_PROGRAM_V2_ID,
 } from './constants';
 import * as anchor from '@project-serum/anchor';
 import fs from 'fs';
-import {
-  createCandyMachineV2Account,
-  createConfigAccount,
-} from './instructions';
+// import {
+//   createCandyMachineV2Account,
+//   createConfigAccount,
+// } from './instructions';
 import { web3 } from '@project-serum/anchor';
 import log from 'loglevel';
 import { AccountLayout, u64 } from '@solana/spl-token';
@@ -112,127 +113,127 @@ export interface CandyMachineData {
     share: number;
   }[];
 }
+//
+// export const createCandyMachineV2 = async function (
+//   anchorProgram: anchor.Program,
+//   payerWallet: Keypair,
+//   treasuryWallet: PublicKey,
+//   splToken: PublicKey,
+//   candyData: CandyMachineData,
+// ) {
+//   const candyAccount = Keypair.generate();
+//   candyData.uuid = uuidFromConfigPubkey(candyAccount.publicKey);
+//
+//   if (!candyData.creators || candyData.creators.length === 0) {
+//     throw new Error(`Invalid config, there must be at least one creator.`);
+//   }
+//
+//   const totalShare = (candyData.creators || []).reduce(
+//     (acc, curr) => acc + curr.share,
+//     0,
+//   );
+//
+//   if (totalShare !== 100) {
+//     throw new Error(`Invalid config, creators shares must add up to 100`);
+//   }
+//
+//   const remainingAccounts = [];
+//   if (splToken) {
+//     remainingAccounts.push({
+//       pubkey: splToken,
+//       isSigner: false,
+//       isWritable: false,
+//     });
+//   }
+//   return {
+//     candyMachine: candyAccount.publicKey,
+//     uuid: candyData.uuid,
+//     txId: await anchorProgram.rpc.initializeCandyMachine(candyData, {
+//       accounts: {
+//         candyMachine: candyAccount.publicKey,
+//         wallet: treasuryWallet,
+//         authority: payerWallet.publicKey,
+//         payer: payerWallet.publicKey,
+//         systemProgram: SystemProgram.programId,
+//         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+//       },
+//       signers: [payerWallet, candyAccount],
+//       remainingAccounts:
+//         remainingAccounts.length > 0 ? remainingAccounts : undefined,
+//       instructions: [
+//         await createCandyMachineV2Account(
+//           anchorProgram,
+//           candyData,
+//           payerWallet.publicKey,
+//           candyAccount.publicKey,
+//         ),
+//       ],
+//     }),
+//   };
+// };
 
-export const createCandyMachineV2 = async function (
-  anchorProgram: anchor.Program,
-  payerWallet: Keypair,
-  treasuryWallet: PublicKey,
-  splToken: PublicKey,
-  candyData: CandyMachineData,
-) {
-  const candyAccount = Keypair.generate();
-  candyData.uuid = uuidFromConfigPubkey(candyAccount.publicKey);
-
-  if (!candyData.creators || candyData.creators.length === 0) {
-    throw new Error(`Invalid config, there must be at least one creator.`);
-  }
-
-  const totalShare = (candyData.creators || []).reduce(
-    (acc, curr) => acc + curr.share,
-    0,
-  );
-
-  if (totalShare !== 100) {
-    throw new Error(`Invalid config, creators shares must add up to 100`);
-  }
-
-  const remainingAccounts = [];
-  if (splToken) {
-    remainingAccounts.push({
-      pubkey: splToken,
-      isSigner: false,
-      isWritable: false,
-    });
-  }
-  return {
-    candyMachine: candyAccount.publicKey,
-    uuid: candyData.uuid,
-    txId: await anchorProgram.rpc.initializeCandyMachine(candyData, {
-      accounts: {
-        candyMachine: candyAccount.publicKey,
-        wallet: treasuryWallet,
-        authority: payerWallet.publicKey,
-        payer: payerWallet.publicKey,
-        systemProgram: SystemProgram.programId,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-      },
-      signers: [payerWallet, candyAccount],
-      remainingAccounts:
-        remainingAccounts.length > 0 ? remainingAccounts : undefined,
-      instructions: [
-        await createCandyMachineV2Account(
-          anchorProgram,
-          candyData,
-          payerWallet.publicKey,
-          candyAccount.publicKey,
-        ),
-      ],
-    }),
-  };
-};
-
-export const createConfig = async function (
-  anchorProgram: anchor.Program,
-  payerWallet: Keypair,
-  configData: {
-    maxNumberOfLines: anchor.BN;
-    symbol: string;
-    sellerFeeBasisPoints: number;
-    isMutable: boolean;
-    maxSupply: anchor.BN;
-    retainAuthority: boolean;
-    creators: {
-      address: PublicKey;
-      verified: boolean;
-      share: number;
-    }[];
-  },
-) {
-  const configAccount = Keypair.generate();
-  const uuid = uuidFromConfigPubkey(configAccount.publicKey);
-
-  if (!configData.creators || configData.creators.length === 0) {
-    throw new Error(`Invalid config, there must be at least one creator.`);
-  }
-
-  const totalShare = (configData.creators || []).reduce(
-    (acc, curr) => acc + curr.share,
-    0,
-  );
-
-  if (totalShare !== 100) {
-    throw new Error(`Invalid config, creators shares must add up to 100`);
-  }
-
-  return {
-    config: configAccount.publicKey,
-    uuid,
-    txId: await anchorProgram.rpc.initializeConfig(
-      {
-        uuid,
-        ...configData,
-      },
-      {
-        accounts: {
-          config: configAccount.publicKey,
-          authority: payerWallet.publicKey,
-          payer: payerWallet.publicKey,
-          systemProgram: SystemProgram.programId,
-          rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        },
-        signers: [payerWallet, configAccount],
-        instructions: [
-          await createConfigAccount(
-            anchorProgram,
-            configData,
-            payerWallet.publicKey,
-            configAccount.publicKey,
-          ),
-        ],
-      },
-    ),
-  };
-};
+// export const createConfig = async function (
+//   anchorProgram: anchor.Program,
+//   payerWallet: Keypair,
+//   configData: {
+//     maxNumberOfLines: anchor.BN;
+//     symbol: string;
+//     sellerFeeBasisPoints: number;
+//     isMutable: boolean;
+//     maxSupply: anchor.BN;
+//     retainAuthority: boolean;
+//     creators: {
+//       address: PublicKey;
+//       verified: boolean;
+//       share: number;
+//     }[];
+//   },
+// ) {
+//   const configAccount = Keypair.generate();
+//   const uuid = uuidFromConfigPubkey(configAccount.publicKey);
+//
+//   if (!configData.creators || configData.creators.length === 0) {
+//     throw new Error(`Invalid config, there must be at least one creator.`);
+//   }
+//
+//   const totalShare = (configData.creators || []).reduce(
+//     (acc, curr) => acc + curr.share,
+//     0,
+//   );
+//
+//   if (totalShare !== 100) {
+//     throw new Error(`Invalid config, creators shares must add up to 100`);
+//   }
+//
+//   return {
+//     config: configAccount.publicKey,
+//     uuid,
+//     txId: await anchorProgram.rpc.initializeConfig(
+//       {
+//         uuid,
+//         ...configData,
+//       },
+//       {
+//         accounts: {
+//           config: configAccount.publicKey,
+//           authority: payerWallet.publicKey,
+//           payer: payerWallet.publicKey,
+//           systemProgram: SystemProgram.programId,
+//           rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+//         },
+//         signers: [payerWallet, configAccount],
+//         instructions: [
+//           await createConfigAccount(
+//             anchorProgram,
+//             configData,
+//             payerWallet.publicKey,
+//             configAccount.publicKey,
+//           ),
+//         ],
+//       },
+//     ),
+//   };
+// };
 
 export function uuidFromConfigPubkey(configAccount: PublicKey) {
   return configAccount.toBase58().slice(0, 6);
@@ -245,101 +246,101 @@ export const getTokenWallet = async function (
   return (
     await PublicKey.findProgramAddress(
       [wallet.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mint.toBuffer()],
-      SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+      ASSOCIATED_TOKEN_PROGRAM_ID,
     )
   )[0];
 };
 
-export const getCandyMachineAddress = async (
-  config: anchor.web3.PublicKey,
-  uuid: string,
-): Promise<[PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from(CANDY_MACHINE), config.toBuffer(), Buffer.from(uuid)],
-    CANDY_MACHINE_PROGRAM_ID,
-  );
-};
+// export const getCandyMachineAddress = async (
+//   config: anchor.web3.PublicKey,
+//   uuid: string,
+// ): Promise<[PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [Buffer.from(CANDY_MACHINE), config.toBuffer(), Buffer.from(uuid)],
+//     CANDY_MACHINE_PROGRAM_ID,
+//   );
+// };
 
-export const deriveCandyMachineV2ProgramAddress = async (
-  candyMachineId: anchor.web3.PublicKey,
-): Promise<[PublicKey, number]> => {
-  return await PublicKey.findProgramAddress(
-    [Buffer.from(CANDY_MACHINE), candyMachineId.toBuffer()],
-    CANDY_MACHINE_PROGRAM_V2_ID,
-  );
-};
+// export const deriveCandyMachineV2ProgramAddress = async (
+//   candyMachineId: anchor.web3.PublicKey,
+// ): Promise<[PublicKey, number]> => {
+//   return await PublicKey.findProgramAddress(
+//     [Buffer.from(CANDY_MACHINE), candyMachineId.toBuffer()],
+//     CANDY_MACHINE_PROGRAM_V2_ID,
+//   );
+// };
 
-export const getConfig = async (
-  authority: anchor.web3.PublicKey,
-  uuid: string,
-): Promise<[PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from(CANDY_MACHINE), authority.toBuffer(), Buffer.from(uuid)],
-    CANDY_MACHINE_PROGRAM_ID,
-  );
-};
+// export const getConfig = async (
+//   authority: anchor.web3.PublicKey,
+//   uuid: string,
+// ): Promise<[PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [Buffer.from(CANDY_MACHINE), authority.toBuffer(), Buffer.from(uuid)],
+//     CANDY_MACHINE_PROGRAM_ID,
+//   );
+// };
 
-export const getTokenMint = async (
-  authority: anchor.web3.PublicKey,
-  uuid: string,
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from('fair_launch'),
-      authority.toBuffer(),
-      Buffer.from('mint'),
-      Buffer.from(uuid),
-    ],
-    FAIR_LAUNCH_PROGRAM_ID,
-  );
-};
+// export const getTokenMint = async (
+//   authority: anchor.web3.PublicKey,
+//   uuid: string,
+// ): Promise<[anchor.web3.PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [
+//       Buffer.from('fair_launch'),
+//       authority.toBuffer(),
+//       Buffer.from('mint'),
+//       Buffer.from(uuid),
+//     ],
+//     FAIR_LAUNCH_PROGRAM_ID,
+//   );
+// };
 
-export const getFairLaunch = async (
-  tokenMint: anchor.web3.PublicKey,
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from('fair_launch'), tokenMint.toBuffer()],
-    FAIR_LAUNCH_PROGRAM_ID,
-  );
-};
+// export const getFairLaunch = async (
+//   tokenMint: anchor.web3.PublicKey,
+// ): Promise<[anchor.web3.PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [Buffer.from('fair_launch'), tokenMint.toBuffer()],
+//     FAIR_LAUNCH_PROGRAM_ID,
+//   );
+// };
 
-export const getCandyMachineCreator = async (
-  candyMachine: anchor.web3.PublicKey,
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from('candy_machine'), candyMachine.toBuffer()],
-    CANDY_MACHINE_PROGRAM_V2_ID,
-  );
-};
+// export const getCandyMachineCreator = async (
+//   candyMachine: anchor.web3.PublicKey,
+// ): Promise<[anchor.web3.PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [Buffer.from('candy_machine'), candyMachine.toBuffer()],
+//     CANDY_MACHINE_PROGRAM_V2_ID,
+//   );
+// };
 
-export const getFairLaunchTicket = async (
-  tokenMint: anchor.web3.PublicKey,
-  buyer: anchor.web3.PublicKey,
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from('fair_launch'), tokenMint.toBuffer(), buyer.toBuffer()],
-    FAIR_LAUNCH_PROGRAM_ID,
-  );
-};
+// export const getFairLaunchTicket = async (
+//   tokenMint: anchor.web3.PublicKey,
+//   buyer: anchor.web3.PublicKey,
+// ): Promise<[anchor.web3.PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [Buffer.from('fair_launch'), tokenMint.toBuffer(), buyer.toBuffer()],
+//     FAIR_LAUNCH_PROGRAM_ID,
+//   );
+// };
 
-export const getFairLaunchLotteryBitmap = async (
-  tokenMint: anchor.web3.PublicKey,
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from('fair_launch'), tokenMint.toBuffer(), Buffer.from('lottery')],
-    FAIR_LAUNCH_PROGRAM_ID,
-  );
-};
+// export const getFairLaunchLotteryBitmap = async (
+//   tokenMint: anchor.web3.PublicKey,
+// ): Promise<[anchor.web3.PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [Buffer.from('fair_launch'), tokenMint.toBuffer(), Buffer.from('lottery')],
+//     FAIR_LAUNCH_PROGRAM_ID,
+//   );
+// };
 
-export const getFairLaunchTicketSeqLookup = async (
-  tokenMint: anchor.web3.PublicKey,
-  seq: anchor.BN,
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from('fair_launch'), tokenMint.toBuffer(), seq.toBuffer('le', 8)],
-    FAIR_LAUNCH_PROGRAM_ID,
-  );
-};
+// export const getFairLaunchTicketSeqLookup = async (
+//   tokenMint: anchor.web3.PublicKey,
+//   seq: anchor.BN,
+// ): Promise<[anchor.web3.PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [Buffer.from('fair_launch'), tokenMint.toBuffer(), seq.toBuffer('le', 8)],
+//     FAIR_LAUNCH_PROGRAM_ID,
+//   );
+// };
 
 export const getAtaForMint = async (
   mint: anchor.web3.PublicKey,
@@ -347,220 +348,220 @@ export const getAtaForMint = async (
 ): Promise<[anchor.web3.PublicKey, number]> => {
   return await anchor.web3.PublicKey.findProgramAddress(
     [buyer.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mint.toBuffer()],
-    SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+    ASSOCIATED_TOKEN_PROGRAM_ID,
   );
 };
 
-export const getParticipationMint = async (
-  authority: anchor.web3.PublicKey,
-  uuid: string,
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from('fair_launch'),
-      authority.toBuffer(),
-      Buffer.from('mint'),
-      Buffer.from(uuid),
-      Buffer.from('participation'),
-    ],
-    FAIR_LAUNCH_PROGRAM_ID,
-  );
-};
+// export const getParticipationMint = async (
+//   authority: anchor.web3.PublicKey,
+//   uuid: string,
+// ): Promise<[anchor.web3.PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [
+//       Buffer.from('fair_launch'),
+//       authority.toBuffer(),
+//       Buffer.from('mint'),
+//       Buffer.from(uuid),
+//       Buffer.from('participation'),
+//     ],
+//     FAIR_LAUNCH_PROGRAM_ID,
+//   );
+// };
 
-export const getParticipationToken = async (
-  authority: anchor.web3.PublicKey,
-  uuid: string,
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from('fair_launch'),
-      authority.toBuffer(),
-      Buffer.from('mint'),
-      Buffer.from(uuid),
-      Buffer.from('participation'),
-      Buffer.from('account'),
-    ],
-    FAIR_LAUNCH_PROGRAM_ID,
-  );
-};
+// export const getParticipationToken = async (
+//   authority: anchor.web3.PublicKey,
+//   uuid: string,
+// ): Promise<[anchor.web3.PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [
+//       Buffer.from('fair_launch'),
+//       authority.toBuffer(),
+//       Buffer.from('mint'),
+//       Buffer.from(uuid),
+//       Buffer.from('participation'),
+//       Buffer.from('account'),
+//     ],
+//     FAIR_LAUNCH_PROGRAM_ID,
+//   );
+// };
 
-export const getTreasury = async (
-  tokenMint: anchor.web3.PublicKey,
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from('fair_launch'), tokenMint.toBuffer(), Buffer.from('treasury')],
-    FAIR_LAUNCH_PROGRAM_ID,
-  );
-};
+// export const getTreasury = async (
+//   tokenMint: anchor.web3.PublicKey,
+// ): Promise<[anchor.web3.PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [Buffer.from('fair_launch'), tokenMint.toBuffer(), Buffer.from('treasury')],
+//     FAIR_LAUNCH_PROGRAM_ID,
+//   );
+// };
 
-export const getMetadata = async (
-  mint: anchor.web3.PublicKey,
-): Promise<anchor.web3.PublicKey> => {
-  return (
-    await anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from('metadata'),
-        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        mint.toBuffer(),
-      ],
-      TOKEN_METADATA_PROGRAM_ID,
-    )
-  )[0];
-};
+// export const getMetadata = async (
+//   mint: anchor.web3.PublicKey,
+// ): Promise<anchor.web3.PublicKey> => {
+//   return (
+//     await anchor.web3.PublicKey.findProgramAddress(
+//       [
+//         Buffer.from('metadata'),
+//         TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+//         mint.toBuffer(),
+//       ],
+//       TOKEN_METADATA_PROGRAM_ID,
+//     )
+//   )[0];
+// };
 
-export const getMasterEdition = async (
-  mint: anchor.web3.PublicKey,
-): Promise<anchor.web3.PublicKey> => {
-  return (
-    await anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from('metadata'),
-        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        mint.toBuffer(),
-        Buffer.from('edition'),
-      ],
-      TOKEN_METADATA_PROGRAM_ID,
-    )
-  )[0];
-};
+// export const getMasterEdition = async (
+//   mint: anchor.web3.PublicKey,
+// ): Promise<anchor.web3.PublicKey> => {
+//   return (
+//     await anchor.web3.PublicKey.findProgramAddress(
+//       [
+//         Buffer.from('metadata'),
+//         TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+//         mint.toBuffer(),
+//         Buffer.from('edition'),
+//       ],
+//       TOKEN_METADATA_PROGRAM_ID,
+//     )
+//   )[0];
+// };
 
-export const getEditionMarkPda = async (
-  mint: anchor.web3.PublicKey,
-  edition: number,
-): Promise<anchor.web3.PublicKey> => {
-  const editionNumber = Math.floor(edition / 248);
-  return (
-    await anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from('metadata'),
-        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        mint.toBuffer(),
-        Buffer.from('edition'),
-        Buffer.from(editionNumber.toString()),
-      ],
-      TOKEN_METADATA_PROGRAM_ID,
-    )
-  )[0];
-};
+// export const getEditionMarkPda = async (
+//   mint: anchor.web3.PublicKey,
+//   edition: number,
+// ): Promise<anchor.web3.PublicKey> => {
+//   const editionNumber = Math.floor(edition / 248);
+//   return (
+//     await anchor.web3.PublicKey.findProgramAddress(
+//       [
+//         Buffer.from('metadata'),
+//         TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+//         mint.toBuffer(),
+//         Buffer.from('edition'),
+//         Buffer.from(editionNumber.toString()),
+//       ],
+//       TOKEN_METADATA_PROGRAM_ID,
+//     )
+//   )[0];
+// };
 
-export const getAuctionHouse = async (
-  creator: anchor.web3.PublicKey,
-  treasuryMint: anchor.web3.PublicKey,
-): Promise<[PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from(AUCTION_HOUSE), creator.toBuffer(), treasuryMint.toBuffer()],
-    AUCTION_HOUSE_PROGRAM_ID,
-  );
-};
+// export const getAuctionHouse = async (
+//   creator: anchor.web3.PublicKey,
+//   treasuryMint: anchor.web3.PublicKey,
+// ): Promise<[PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [Buffer.from(AUCTION_HOUSE), creator.toBuffer(), treasuryMint.toBuffer()],
+//     AUCTION_HOUSE_PROGRAM_ID,
+//   );
+// };
 
-export const getAuctionHouseProgramAsSigner = async (): Promise<
-  [PublicKey, number]
-> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from(AUCTION_HOUSE), Buffer.from('signer')],
-    AUCTION_HOUSE_PROGRAM_ID,
-  );
-};
+// export const getAuctionHouseProgramAsSigner = async (): Promise<
+//   [PublicKey, number]
+// > => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [Buffer.from(AUCTION_HOUSE), Buffer.from('signer')],
+//     AUCTION_HOUSE_PROGRAM_ID,
+//   );
+// };
 
-export const getAuctionHouseFeeAcct = async (
-  auctionHouse: anchor.web3.PublicKey,
-): Promise<[PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from(AUCTION_HOUSE),
-      auctionHouse.toBuffer(),
-      Buffer.from(FEE_PAYER),
-    ],
-    AUCTION_HOUSE_PROGRAM_ID,
-  );
-};
+// export const getAuctionHouseFeeAcct = async (
+//   auctionHouse: anchor.web3.PublicKey,
+// ): Promise<[PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [
+//       Buffer.from(AUCTION_HOUSE),
+//       auctionHouse.toBuffer(),
+//       Buffer.from(FEE_PAYER),
+//     ],
+//     AUCTION_HOUSE_PROGRAM_ID,
+//   );
+// };
 
-export const getAuctionHouseTreasuryAcct = async (
-  auctionHouse: anchor.web3.PublicKey,
-): Promise<[PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from(AUCTION_HOUSE),
-      auctionHouse.toBuffer(),
-      Buffer.from(TREASURY),
-    ],
-    AUCTION_HOUSE_PROGRAM_ID,
-  );
-};
+// export const getAuctionHouseTreasuryAcct = async (
+//   auctionHouse: anchor.web3.PublicKey,
+// ): Promise<[PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [
+//       Buffer.from(AUCTION_HOUSE),
+//       auctionHouse.toBuffer(),
+//       Buffer.from(TREASURY),
+//     ],
+//     AUCTION_HOUSE_PROGRAM_ID,
+//   );
+// };
 
-export const getAuctionHouseBuyerEscrow = async (
-  auctionHouse: anchor.web3.PublicKey,
-  wallet: anchor.web3.PublicKey,
-): Promise<[PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from(AUCTION_HOUSE), auctionHouse.toBuffer(), wallet.toBuffer()],
-    AUCTION_HOUSE_PROGRAM_ID,
-  );
-};
+// export const getAuctionHouseBuyerEscrow = async (
+//   auctionHouse: anchor.web3.PublicKey,
+//   wallet: anchor.web3.PublicKey,
+// ): Promise<[PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [Buffer.from(AUCTION_HOUSE), auctionHouse.toBuffer(), wallet.toBuffer()],
+//     AUCTION_HOUSE_PROGRAM_ID,
+//   );
+// };
 
-export const getAuctionHouseTradeState = async (
-  auctionHouse: anchor.web3.PublicKey,
-  wallet: anchor.web3.PublicKey,
-  tokenAccount: anchor.web3.PublicKey,
-  treasuryMint: anchor.web3.PublicKey,
-  tokenMint: anchor.web3.PublicKey,
-  tokenSize: anchor.BN,
-  buyPrice: anchor.BN,
-): Promise<[PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from(AUCTION_HOUSE),
-      wallet.toBuffer(),
-      auctionHouse.toBuffer(),
-      tokenAccount.toBuffer(),
-      treasuryMint.toBuffer(),
-      tokenMint.toBuffer(),
-      buyPrice.toBuffer('le', 8),
-      tokenSize.toBuffer('le', 8),
-    ],
-    AUCTION_HOUSE_PROGRAM_ID,
-  );
-};
+// export const getAuctionHouseTradeState = async (
+//   auctionHouse: anchor.web3.PublicKey,
+//   wallet: anchor.web3.PublicKey,
+//   tokenAccount: anchor.web3.PublicKey,
+//   treasuryMint: anchor.web3.PublicKey,
+//   tokenMint: anchor.web3.PublicKey,
+//   tokenSize: anchor.BN,
+//   buyPrice: anchor.BN,
+// ): Promise<[PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [
+//       Buffer.from(AUCTION_HOUSE),
+//       wallet.toBuffer(),
+//       auctionHouse.toBuffer(),
+//       tokenAccount.toBuffer(),
+//       treasuryMint.toBuffer(),
+//       tokenMint.toBuffer(),
+//       buyPrice.toBuffer('le', 8),
+//       tokenSize.toBuffer('le', 8),
+//     ],
+//     AUCTION_HOUSE_PROGRAM_ID,
+//   );
+// };
 
-export const getTokenEntanglement = async (
-  mintA: anchor.web3.PublicKey,
-  mintB: anchor.web3.PublicKey,
-): Promise<[PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from(TOKEN_ENTANGLER), mintA.toBuffer(), mintB.toBuffer()],
-    TOKEN_ENTANGLEMENT_PROGRAM_ID,
-  );
-};
+// export const getTokenEntanglement = async (
+//   mintA: anchor.web3.PublicKey,
+//   mintB: anchor.web3.PublicKey,
+// ): Promise<[PublicKey, number]> => {
+//   return await anchor.web3.PublicKey.findProgramAddress(
+//     [Buffer.from(TOKEN_ENTANGLER), mintA.toBuffer(), mintB.toBuffer()],
+//     TOKEN_ENTANGLEMENT_PROGRAM_ID,
+//   );
+// };
 
-export const getTokenEntanglementEscrows = async (
-  mintA: anchor.web3.PublicKey,
-  mintB: anchor.web3.PublicKey,
-): Promise<[PublicKey, number, PublicKey, number]> => {
-  return [
-    ...(await anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from(TOKEN_ENTANGLER),
-        mintA.toBuffer(),
-        mintB.toBuffer(),
-        Buffer.from(ESCROW),
-        Buffer.from(A),
-      ],
-      TOKEN_ENTANGLEMENT_PROGRAM_ID,
-    )),
-    ...(await anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from(TOKEN_ENTANGLER),
-        mintA.toBuffer(),
-        mintB.toBuffer(),
-        Buffer.from(ESCROW),
-        Buffer.from(B),
-      ],
-      TOKEN_ENTANGLEMENT_PROGRAM_ID,
-    )),
-  ];
-};
+// export const getTokenEntanglementEscrows = async (
+//   mintA: anchor.web3.PublicKey,
+//   mintB: anchor.web3.PublicKey,
+// ): Promise<[PublicKey, number, PublicKey, number]> => {
+//   return [
+//     ...(await anchor.web3.PublicKey.findProgramAddress(
+//       [
+//         Buffer.from(TOKEN_ENTANGLER),
+//         mintA.toBuffer(),
+//         mintB.toBuffer(),
+//         Buffer.from(ESCROW),
+//         Buffer.from(A),
+//       ],
+//       TOKEN_ENTANGLEMENT_PROGRAM_ID,
+//     )),
+//     ...(await anchor.web3.PublicKey.findProgramAddress(
+//       [
+//         Buffer.from(TOKEN_ENTANGLER),
+//         mintA.toBuffer(),
+//         mintB.toBuffer(),
+//         Buffer.from(ESCROW),
+//         Buffer.from(B),
+//       ],
+//       TOKEN_ENTANGLEMENT_PROGRAM_ID,
+//     )),
+//   ];
+// };
 
-export function loadWalletKey(keypair): Keypair {
+export function loadWalletKey(keypair: string): Keypair {
   if (!keypair || keypair == '') {
     throw new Error('Keypair is required!');
   }
@@ -571,124 +572,124 @@ export function loadWalletKey(keypair): Keypair {
   return loaded;
 }
 
-export async function loadCandyProgram(
-  walletKeyPair: Keypair,
-  env: string,
-  customRpcUrl?: string,
-) {
-  if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
+// export async function loadCandyProgram(
+//   walletKeyPair: Keypair,
+//   env: string,
+//   customRpcUrl?: string,
+// ) {
+//   if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
+//
+//   // @ts-ignore
+//   const solConnection = new anchor.web3.Connection(
+//     //@ts-ignore
+//     customRpcUrl || getCluster(env),
+//   );
+//
+//   const walletWrapper = new anchor.Wallet(walletKeyPair);
+//   const provider = new anchor.Provider(solConnection, walletWrapper, {
+//     preflightCommitment: 'recent',
+//   });
+//   const idl = await anchor.Program.fetchIdl(CANDY_MACHINE_PROGRAM_ID, provider);
+//   const program = new anchor.Program(idl, CANDY_MACHINE_PROGRAM_ID, provider);
+//   log.debug('program id from anchor', program.programId.toBase58());
+//   return program;
+// }
 
-  // @ts-ignore
-  const solConnection = new anchor.web3.Connection(
-    //@ts-ignore
-    customRpcUrl || getCluster(env),
-  );
+// export async function loadCandyProgramV2(
+//   walletKeyPair: Keypair,
+//   env: string,
+//   customRpcUrl?: string,
+// ) {
+//   if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
+//
+//   // @ts-ignore
+//   const solConnection = new anchor.web3.Connection(
+//     //@ts-ignore
+//     customRpcUrl || getCluster(env),
+//   );
+//
+//   const walletWrapper = new anchor.Wallet(walletKeyPair);
+//   const provider = new anchor.Provider(solConnection, walletWrapper, {
+//     preflightCommitment: 'recent',
+//   });
+//   const idl = await anchor.Program.fetchIdl(
+//     CANDY_MACHINE_PROGRAM_V2_ID,
+//     provider,
+//   );
+//   const program = new anchor.Program(
+//     idl,
+//     CANDY_MACHINE_PROGRAM_V2_ID,
+//     provider,
+//   );
+//   log.debug('program id from anchor', program.programId.toBase58());
+//   return program;
+// }
 
-  const walletWrapper = new anchor.Wallet(walletKeyPair);
-  const provider = new anchor.Provider(solConnection, walletWrapper, {
-    preflightCommitment: 'recent',
-  });
-  const idl = await anchor.Program.fetchIdl(CANDY_MACHINE_PROGRAM_ID, provider);
-  const program = new anchor.Program(idl, CANDY_MACHINE_PROGRAM_ID, provider);
-  log.debug('program id from anchor', program.programId.toBase58());
-  return program;
-}
+// export async function loadFairLaunchProgram(
+//   walletKeyPair: Keypair,
+//   env: string,
+//   customRpcUrl?: string,
+// ) {
+//   if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
+//
+//   // @ts-ignore
+//   const solConnection = new anchor.web3.Connection(
+//     //@ts-ignore
+//     customRpcUrl || getCluster(env),
+//   );
+//   const walletWrapper = new anchor.Wallet(walletKeyPair);
+//   const provider = new anchor.Provider(solConnection, walletWrapper, {
+//     preflightCommitment: 'recent',
+//   });
+//   const idl = await anchor.Program.fetchIdl(FAIR_LAUNCH_PROGRAM_ID, provider);
+//
+//   return new anchor.Program(idl, FAIR_LAUNCH_PROGRAM_ID, provider);
+// }
 
-export async function loadCandyProgramV2(
-  walletKeyPair: Keypair,
-  env: string,
-  customRpcUrl?: string,
-) {
-  if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
+// export async function loadAuctionHouseProgram(
+//   walletKeyPair: Keypair,
+//   env: string,
+//   customRpcUrl?: string,
+// ) {
+//   if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
+//
+//   // @ts-ignore
+//   const solConnection = new anchor.web3.Connection(
+//     //@ts-ignore
+//     customRpcUrl || getCluster(env),
+//   );
+//   const walletWrapper = new anchor.Wallet(walletKeyPair);
+//   const provider = new anchor.Provider(solConnection, walletWrapper, {
+//     preflightCommitment: 'recent',
+//   });
+//   const idl = await anchor.Program.fetchIdl(AUCTION_HOUSE_PROGRAM_ID, provider);
+//
+//   return new anchor.Program(idl, AUCTION_HOUSE_PROGRAM_ID, provider);
+// }
 
-  // @ts-ignore
-  const solConnection = new anchor.web3.Connection(
-    //@ts-ignore
-    customRpcUrl || getCluster(env),
-  );
-
-  const walletWrapper = new anchor.Wallet(walletKeyPair);
-  const provider = new anchor.Provider(solConnection, walletWrapper, {
-    preflightCommitment: 'recent',
-  });
-  const idl = await anchor.Program.fetchIdl(
-    CANDY_MACHINE_PROGRAM_V2_ID,
-    provider,
-  );
-  const program = new anchor.Program(
-    idl,
-    CANDY_MACHINE_PROGRAM_V2_ID,
-    provider,
-  );
-  log.debug('program id from anchor', program.programId.toBase58());
-  return program;
-}
-
-export async function loadFairLaunchProgram(
-  walletKeyPair: Keypair,
-  env: string,
-  customRpcUrl?: string,
-) {
-  if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
-
-  // @ts-ignore
-  const solConnection = new anchor.web3.Connection(
-    //@ts-ignore
-    customRpcUrl || getCluster(env),
-  );
-  const walletWrapper = new anchor.Wallet(walletKeyPair);
-  const provider = new anchor.Provider(solConnection, walletWrapper, {
-    preflightCommitment: 'recent',
-  });
-  const idl = await anchor.Program.fetchIdl(FAIR_LAUNCH_PROGRAM_ID, provider);
-
-  return new anchor.Program(idl, FAIR_LAUNCH_PROGRAM_ID, provider);
-}
-
-export async function loadAuctionHouseProgram(
-  walletKeyPair: Keypair,
-  env: string,
-  customRpcUrl?: string,
-) {
-  if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
-
-  // @ts-ignore
-  const solConnection = new anchor.web3.Connection(
-    //@ts-ignore
-    customRpcUrl || getCluster(env),
-  );
-  const walletWrapper = new anchor.Wallet(walletKeyPair);
-  const provider = new anchor.Provider(solConnection, walletWrapper, {
-    preflightCommitment: 'recent',
-  });
-  const idl = await anchor.Program.fetchIdl(AUCTION_HOUSE_PROGRAM_ID, provider);
-
-  return new anchor.Program(idl, AUCTION_HOUSE_PROGRAM_ID, provider);
-}
-
-export async function loadTokenEntanglementProgream(
-  walletKeyPair: Keypair,
-  env: string,
-  customRpcUrl?: string,
-) {
-  if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
-
-  // @ts-ignore
-  const solConnection = new anchor.web3.Connection(
-    //@ts-ignore
-    customRpcUrl || getCluster(env),
-  );
-  const walletWrapper = new anchor.Wallet(walletKeyPair);
-  const provider = new anchor.Provider(solConnection, walletWrapper, {
-    preflightCommitment: 'recent',
-  });
-  const idl = await anchor.Program.fetchIdl(
-    TOKEN_ENTANGLEMENT_PROGRAM_ID,
-    provider,
-  );
-
-  return new anchor.Program(idl, TOKEN_ENTANGLEMENT_PROGRAM_ID, provider);
-}
+// export async function loadTokenEntanglementProgream(
+//   walletKeyPair: Keypair,
+//   env: string,
+//   customRpcUrl?: string,
+// ) {
+//   if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
+//
+//   // @ts-ignore
+//   const solConnection = new anchor.web3.Connection(
+//     //@ts-ignore
+//     customRpcUrl || getCluster(env),
+//   );
+//   const walletWrapper = new anchor.Wallet(walletKeyPair);
+//   const provider = new anchor.Provider(solConnection, walletWrapper, {
+//     preflightCommitment: 'recent',
+//   });
+//   const idl = await anchor.Program.fetchIdl(
+//     TOKEN_ENTANGLEMENT_PROGRAM_ID,
+//     provider,
+//   );
+//
+//   return new anchor.Program(idl, TOKEN_ENTANGLEMENT_PROGRAM_ID, provider);
+// }
 
 export async function getTokenAmount(
   anchorProgram: anchor.Program,
@@ -696,21 +697,18 @@ export async function getTokenAmount(
   mint: anchor.web3.PublicKey,
 ): Promise<number> {
   let amount = 0;
-  if (!mint.equals(WRAPPED_SOL_MINT)) {
-    try {
-      const token =
-        await anchorProgram.provider.connection.getTokenAccountBalance(account);
-      amount = token.value.uiAmount * Math.pow(10, token.value.decimals);
-    } catch (e) {
-      log.error(e);
-      log.info(
-        'Account ',
-        account.toBase58(),
-        'didnt return value. Assuming 0 tokens.',
-      );
-    }
-  } else {
-    amount = await anchorProgram.provider.connection.getBalance(account);
+  try {
+    const token =
+      await anchorProgram.provider.connection.getTokenAccountBalance(account);
+    // @ts-ignore
+    amount = token.value.uiAmount * Math.pow(10, token.value.decimals);
+  } catch (e) {
+    log.error(e);
+    log.info(
+      'Account ',
+      account.toBase58(),
+      'didnt return value. Assuming 0 tokens.',
+    );
   }
   return amount;
 }

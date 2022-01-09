@@ -117,7 +117,8 @@ export async function sendSignedTransaction({
     slot = confirmation?.slot || 0;
   } catch (err) {
     log.error('Timeout Error caught', err);
-    if (err.timeout) {
+    // @ts-ignore
+    if (err && err.timeout) {
       throw new Error('Timed out awaiting confirmation on transaction');
     }
     let simulateResult: SimulatedTransactionResponse | null = null;
