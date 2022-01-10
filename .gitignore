@@ -6,5 +6,5 @@ target
 node_modules
 .idea
 cli/.log
-.idea/workspace.xml
-.idea/workspace.xml
+.idea/*
+
